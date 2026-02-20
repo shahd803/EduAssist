@@ -2,10 +2,7 @@ import Link from 'next/link'
 import Topbar from '@/components/Topbar'
 import Footer from '@/components/Footer'
 
-export default async function SettingsPage({ searchParams }) {
-  const resolvedSearchParams = await searchParams
-  const activeTab = resolvedSearchParams?.tab === 'help' ? 'help' : 'settings'
-
+export default function SettingsPage() {
   return (
     <div className="app">
       <Topbar />
@@ -14,114 +11,106 @@ export default async function SettingsPage({ searchParams }) {
         <section className="panel settings-panel">
           <div className="panel-header">
             <div>
-              <h2>{activeTab === 'help' ? 'Help' : 'Settings'}</h2>
-              <p className="muted">
-                {activeTab === 'help'
-                  ? 'Find quick answers about uploads, generation, and export.'
-                  : 'Customize your workspace and test generation defaults.'}
-              </p>
+              <h2>Settings</h2>
+              <p className="muted">Customize your workspace and test generation defaults.</p>
             </div>
             <Link href="/" className="btn btn-outline">Back to Workspace</Link>
           </div>
 
-          <div className="settings-tabs">
-            <Link href="/settings" className={`settings-tab ${activeTab === 'settings' ? 'active' : ''}`}>
-              Settings
-            </Link>
-            <Link href="/settings?tab=help" className={`settings-tab ${activeTab === 'help' ? 'active' : ''}`}>
-              Help
-            </Link>
+          <div className="settings-grid">
+            <section className="settings-card">
+              <h3>Profile</h3>
+              <label className="field">
+                <span className="label">Display name</span>
+                <input type="text" defaultValue="Teacher Workspace" />
+              </label>
+              <label className="field">
+                <span className="label">School / Org</span>
+                <input type="text" defaultValue="Demo Academy" />
+              </label>
+            </section>
+
+            <section className="settings-card">
+              <h3>Generation Defaults</h3>
+              <label className="field">
+                <span className="label">Default number of questions</span>
+                <input type="number" min="1" max="100" step="1" defaultValue="10" />
+              </label>
+              <label className="field">
+                <span className="label">Default difficulty mix</span>
+                <select defaultValue="Even">
+                  <option>Even</option>
+                  <option>More Easy</option>
+                  <option>More Hard</option>
+                </select>
+              </label>
+            </section>
+
+            <section className="settings-card">
+              <h3>Notifications</h3>
+              <div className="check-grid">
+                <label className="checkbox">
+                  <input type="checkbox" defaultChecked />
+                  <span>Email when export is ready</span>
+                </label>
+                <label className="checkbox">
+                  <input type="checkbox" defaultChecked />
+                  <span>Alert on generation failure</span>
+                </label>
+                <label className="checkbox">
+                  <input type="checkbox" />
+                  <span>Weekly usage summary</span>
+                </label>
+              </div>
+            </section>
+
+            <section className="settings-card">
+              <h3>Privacy</h3>
+              <div className="check-grid">
+                <label className="checkbox">
+                  <input type="checkbox" defaultChecked />
+                  <span>Allow anonymous quality analytics</span>
+                </label>
+                <label className="checkbox">
+                  <input type="checkbox" />
+                  <span>Store uploaded files for reuse</span>
+                </label>
+              </div>
+            </section>
           </div>
 
-          {activeTab === 'settings' ? (
-            <>
-              <div className="settings-grid">
-                <section className="settings-card">
-                  <h3>Profile</h3>
-                  <label className="field">
-                    <span className="label">Display name</span>
-                    <input type="text" defaultValue="Teacher Workspace" />
-                  </label>
-                  <label className="field">
-                    <span className="label">School / Org</span>
-                    <input type="text" defaultValue="Demo Academy" />
-                  </label>
-                </section>
+          <div className="form-actions">
+            <button className="btn btn-primary">Save Changes</button>
+            <button className="btn btn-outline">Reset</button>
+          </div>
+        </section>
 
-                <section className="settings-card">
-                  <h3>Generation Defaults</h3>
-                  <label className="field">
-                    <span className="label">Default number of questions</span>
-                    <input type="number" min="1" max="100" step="1" defaultValue="10" />
-                  </label>
-                  <label className="field">
-                    <span className="label">Default difficulty mix</span>
-                    <select defaultValue="Even">
-                      <option>Even</option>
-                      <option>More Easy</option>
-                      <option>More Hard</option>
-                    </select>
-                  </label>
-                </section>
-
-                <section className="settings-card">
-                  <h3>Notifications</h3>
-                  <div className="check-grid">
-                    <label className="checkbox">
-                      <input type="checkbox" defaultChecked />
-                      <span>Email when export is ready</span>
-                    </label>
-                    <label className="checkbox">
-                      <input type="checkbox" defaultChecked />
-                      <span>Alert on generation failure</span>
-                    </label>
-                    <label className="checkbox">
-                      <input type="checkbox" />
-                      <span>Weekly usage summary</span>
-                    </label>
-                  </div>
-                </section>
-
-                <section className="settings-card">
-                  <h3>Privacy</h3>
-                  <div className="check-grid">
-                    <label className="checkbox">
-                      <input type="checkbox" defaultChecked />
-                      <span>Allow anonymous quality analytics</span>
-                    </label>
-                    <label className="checkbox">
-                      <input type="checkbox" />
-                      <span>Store uploaded files for reuse</span>
-                    </label>
-                  </div>
-                </section>
-              </div>
-
-              <div className="form-actions">
-                <button className="btn btn-primary">Save Changes</button>
-                <button className="btn btn-outline">Reset</button>
-              </div>
-            </>
-          ) : (
-            <div className="settings-grid">
-              <section className="settings-card">
-                <h3>How Upload Works</h3>
-                <p className="muted">Use Upload Material or drag-and-drop PDF, DOCX, or TXT files. Uploaded files appear in Your materials and can be previewed with View.</p>
-              </section>
-              <section className="settings-card">
-                <h3>Generating Tests</h3>
-                <p className="muted">Set question count, choose question types, and pick difficulty distribution. You can review and edit generated questions before export.</p>
-              </section>
-              <section className="settings-card">
-                <h3>Export and Troubleshooting</h3>
-                <p className="muted">If export fails, retry from the Export panel. For upload preview issues, refresh the page and verify your file type is supported.</p>
-              </section>
-              <section className="settings-card">
-                <h3>Contact</h3>
-                <p className="muted">Need help with a classroom workflow? Reach out to support@eduassist.local.</p>
-              </section>
+        <section className="panel settings-panel">
+          <div className="panel-header">
+            <div>
+              <h2>Help</h2>
+              <p className="muted">Find quick answers about uploads, generation, and export.</p>
             </div>
-          )}
+          </div>
+
+          <div className="settings-grid">
+            <section className="settings-card">
+              <h3>How Upload Works</h3>
+              <p className="muted">Use Upload Material or drag-and-drop PDF, DOCX, or TXT files. Uploaded files appear in Your materials and can be previewed with View.</p>
+            </section>
+            <section className="settings-card">
+              <h3>Generating Tests</h3>
+              <p className="muted">Set question count, choose question types, and pick difficulty distribution. You can review and edit generated questions before export.</p>
+            </section>
+            <section className="settings-card">
+              <h3>Export and Troubleshooting</h3>
+              <p className="muted">If export fails, retry from the Export panel. For upload preview issues, refresh the page and verify your file type is supported.</p>
+            </section>
+            <section className="settings-card">
+              <h3>Contact</h3>
+              <p className="muted">Need help with a classroom workflow? Reach out to support@eduassist.local.</p>
+            </section>
+          </div>
         </section>
       </main>
 
