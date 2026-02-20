@@ -5,7 +5,7 @@ function Hero() {
         <p className="eyebrow">Teacher Workspace</p>
         <h1>Generate editable tests from your teaching materials in minutes.</h1>
         <p className="hero-copy">
-          Upload PDF, DOCX, or TXT files, select your source content, and generate
+          Upload your source content, and generate
           multiple-choice, short-answer, and true/false assessments with full editing control.
         </p>
         <div className="hero-metrics">
