@@ -2,8 +2,9 @@ import Link from 'next/link'
 import Topbar from '@/components/Topbar'
 import Footer from '@/components/Footer'
 
-export default function SettingsPage({ searchParams }) {
-  const activeTab = searchParams?.tab === 'help' ? 'help' : 'settings'
+export default async function SettingsPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams
+  const activeTab = resolvedSearchParams?.tab === 'help' ? 'help' : 'settings'
 
   return (
     <div className="app">
