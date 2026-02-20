@@ -10,7 +10,7 @@ function Topbar() {
       </div>
       <nav className="topbar-actions">
         <button className="btn btn-ghost">Settings</button>
-        <button className="btn btn-primary">Help</button>
+        <button className="btn btn-ghost">Help</button>
       </nav>
     </header>
   )
