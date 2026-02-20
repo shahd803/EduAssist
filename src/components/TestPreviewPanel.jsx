@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function TestPreviewPanel({ questions }) {
   const [generatedQuestions, setGeneratedQuestions] = useState(questions)
@@ -32,6 +32,26 @@ function TestPreviewPanel({ questions }) {
     setValidationErrors((current) => ({ ...current, [question.id]: '' }))
     setSavedState((current) => ({ ...current, [question.id]: true }))
   }
+
+  useEffect(() => {
+    const handleQuestionsGenerated = (event) => {
+      const nextQuestions = event?.detail?.questions
+      if (Array.isArray(nextQuestions)) {
+        setGeneratedQuestions(nextQuestions)
+        setValidationErrors({})
+        setSavedState({})
+      }
+    }
+
+    window.addEventListener('eduassist:questions-generated', handleQuestionsGenerated)
+    return () => {
+      window.removeEventListener('eduassist:questions-generated', handleQuestionsGenerated)
+    }
+  }, [])
+
+  useEffect(() => {
+    setGeneratedQuestions(questions)
+  }, [questions])
 
   return (
     <section className="panel">
