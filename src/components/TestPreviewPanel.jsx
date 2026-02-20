@@ -1,4 +1,36 @@
+"use client"
+
+import { useState } from 'react'
+
 function TestPreviewPanel({ questions }) {
+  const [validationErrors, setValidationErrors] = useState({})
+  const [savedState, setSavedState] = useState({})
+
+  const handleSave = (event, question) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+
+    if (question.choices) {
+      const choiceValues = formData
+        .getAll(`${question.id}-choice-text`)
+        .map((value) => String(value).trim())
+        .filter(Boolean)
+      const selectedCorrect = formData.get(`${question.id}-choice`)
+
+      if (choiceValues.length < 2 || !selectedCorrect) {
+        setValidationErrors((current) => ({
+          ...current,
+          [question.id]: 'Validation error: Multiple-choice questions require at least two choices and one marked correct.',
+        }))
+        setSavedState((current) => ({ ...current, [question.id]: false }))
+        return
+      }
+    }
+
+    setValidationErrors((current) => ({ ...current, [question.id]: '' }))
+    setSavedState((current) => ({ ...current, [question.id]: true }))
+  }
+
   return (
     <section className="panel">
       <div className="panel-header">
@@ -33,7 +65,7 @@ function TestPreviewPanel({ questions }) {
                 ))}
               </ul>
             )}
-            <div className="edit-form">
+            <form className="edit-form" onSubmit={(event) => handleSave(event, question)}>
               <label className="field">
                 <span className="label">Prompt</span>
                 <textarea rows="3" defaultValue={question.prompt} />
@@ -44,21 +76,28 @@ function TestPreviewPanel({ questions }) {
                   <div className="choice-grid">
                     {question.choices.map((choice) => (
                       <label key={choice} className="choice-item">
-                        <input type="radio" name={`${question.id}-choice`} defaultChecked={choice === 'ATP'} />
-                        <input type="text" defaultValue={choice} />
+                        <input
+                          type="radio"
+                          name={`${question.id}-choice`}
+                          value={choice}
+                          defaultChecked={choice === 'ATP'}
+                        />
+                        <input type="text" name={`${question.id}-choice-text`} defaultValue={choice} />
                       </label>
                     ))}
                   </div>
-                  <button className="btn btn-outline small">Add choice</button>
+                  <button type="button" className="btn btn-outline small">Add choice</button>
                 </div>
               )}
               <div className="inline-actions">
-                <button className="btn btn-primary">Save Changes</button>
-                <button className="btn btn-outline">Cancel</button>
-                <span className="status-pill success">Changes saved</span>
+                <button type="submit" className="btn btn-primary">Save Changes</button>
+                <button type="button" className="btn btn-outline">Cancel</button>
+                {savedState[question.id] && <span className="status-pill success">Changes saved</span>}
               </div>
-              <p className="status-pill danger">Validation error: Multiple-choice questions require at least two choices and one marked correct.</p>
-            </div>
+              {validationErrors[question.id] && (
+                <p className="status-pill danger">{validationErrors[question.id]}</p>
+              )}
+            </form>
           </article>
         ))}
       </div>

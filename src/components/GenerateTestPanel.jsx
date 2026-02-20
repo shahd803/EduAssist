@@ -1,4 +1,47 @@
+"use client"
+
+import { useState } from 'react'
+
 function GenerateTestPanel() {
+  const [title, setTitle] = useState('Untitled Test')
+  const [questionCount, setQuestionCount] = useState('10')
+  const [questionTypes, setQuestionTypes] = useState({
+    multipleChoice: true,
+    shortAnswer: true,
+    trueFalse: false,
+  })
+  const [generationError, setGenerationError] = useState('')
+
+  const handleTypeToggle = (key) => {
+    setQuestionTypes((current) => ({ ...current, [key]: !current[key] }))
+  }
+
+  const handleGenerate = () => {
+    const parsedCount = Number(questionCount)
+    const hasTypeSelected = Object.values(questionTypes).some(Boolean)
+
+    if (!title.trim()) {
+      setGenerationError('Generation failed: Please enter a test title.')
+      return
+    }
+
+    if (!Number.isInteger(parsedCount) || parsedCount < 1 || parsedCount > 100) {
+      setGenerationError('Generation failed: Number of questions must be between 1 and 100.')
+      return
+    }
+
+    if (!hasTypeSelected) {
+      setGenerationError('Generation failed: Select at least one question type.')
+      return
+    }
+
+    setGenerationError('')
+  }
+
+  const handleRetry = () => {
+    setGenerationError('')
+  }
+
   return (
     <section className="panel">
       <div className="panel-header">
@@ -6,30 +49,49 @@ function GenerateTestPanel() {
           <h2>Generate Test</h2>
           <p className="muted">Configure question types and difficulty.</p>
         </div>
-        <span className="status-pill danger">Generation failed: Temporary AI error. Click Retry to attempt again.</span>
+        {generationError && <span className="status-pill danger">{generationError}</span>}
       </div>
       <div className="form-grid">
         <label className="field">
           <span className="label">Title</span>
-          <input type="text" defaultValue="Untitled Test" />
+          <input type="text" value={title} onChange={(event) => setTitle(event.target.value)} />
         </label>
         <label className="field">
           <span className="label">Number of questions</span>
-          <input type="number" min="1" max="100" step="1" defaultValue="10" />
+          <input
+            type="number"
+            min="1"
+            max="100"
+            step="1"
+            value={questionCount}
+            onChange={(event) => setQuestionCount(event.target.value)}
+          />
         </label>
         <div className="field">
           <span className="label">Question types</span>
           <div className="check-row">
             <label className="checkbox">
-              <input type="checkbox" defaultChecked />
+              <input
+                type="checkbox"
+                checked={questionTypes.multipleChoice}
+                onChange={() => handleTypeToggle('multipleChoice')}
+              />
               <span>Multiple-choice</span>
             </label>
             <label className="checkbox">
-              <input type="checkbox" defaultChecked />
+              <input
+                type="checkbox"
+                checked={questionTypes.shortAnswer}
+                onChange={() => handleTypeToggle('shortAnswer')}
+              />
               <span>Short-answer</span>
             </label>
             <label className="checkbox">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={questionTypes.trueFalse}
+                onChange={() => handleTypeToggle('trueFalse')}
+              />
               <span>True/False</span>
             </label>
           </div>
@@ -60,9 +122,9 @@ function GenerateTestPanel() {
           </div>
         </div>
         <div className="form-actions">
-          <button className="btn btn-primary">Generate</button>
+          <button className="btn btn-primary" onClick={handleGenerate}>Generate</button>
           <button className="btn btn-outline">Cancel</button>
-          <button className="btn btn-outline">Retry</button>
+          <button className="btn btn-outline" onClick={handleRetry}>Retry</button>
         </div>
       </div>
     </section>
