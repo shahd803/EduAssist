@@ -9,8 +9,8 @@ function Topbar() {
         </div>
       </div>
       <nav className="topbar-actions">
-        <button className="btn btn-ghost">View Materials</button>
-        <button className="btn btn-primary">Upload Material</button>
+        <button className="btn btn-ghost">Settings</button>
+        <button className="btn btn-primary">Help</button>
       </nav>
     </header>
   )
