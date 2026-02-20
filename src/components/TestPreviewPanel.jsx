@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-function TestPreviewPanel({ questions }) {
+function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
   const questionCount = questions.length
@@ -52,7 +52,9 @@ function TestPreviewPanel({ questions }) {
             <p>No questions generated yet. Use Generate Test to create your first set.</p>
           </div>
         )}
-        {questions.map((question) => (
+        {questions.map((question) => {
+          const isKept = keptQuestionIds.includes(question.id)
+          return (
           <article key={question.id} className="question-card">
             <div className="question-head">
               <div>
@@ -63,7 +65,13 @@ function TestPreviewPanel({ questions }) {
               <div className="button-stack question-actions">
                 <button className="btn btn-ghost">Edit</button>
                 <button className="btn btn-ghost">Refine</button>
-                <button className="btn btn-ghost">Keep</button>
+                <button
+                  type="button"
+                  className={`btn ${isKept ? 'btn-primary' : 'btn-ghost'}`}
+                  onClick={() => onToggleKeep(question.id)}
+                >
+                  {isKept ? 'Kept' : 'Keep'}
+                </button>
               </div>
             </div>
             {question.choices && (
@@ -102,7 +110,7 @@ function TestPreviewPanel({ questions }) {
               )}
             </form>
           </article>
-        ))}
+        )})}
       </div>
     </section>
   )

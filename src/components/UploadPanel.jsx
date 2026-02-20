@@ -12,15 +12,33 @@ function getFileTypeLabel(fileName) {
   return extension || 'FILE'
 }
 
-function buildMaterialFromFile(file) {
+function extractTextFromFile(rawText) {
+  const sanitized = String(rawText || '')
+    .replace(/\u0000/g, '')
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return sanitized.length >= 30 ? sanitized : ''
+}
+
+async function buildMaterialFromFile(file) {
+  let parsedText = ''
+  try {
+    parsedText = extractTextFromFile(await file.text())
+  } catch {
+    parsedText = ''
+  }
+
   return {
     id: `mat-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
     title: file.name,
     type: getFileTypeLabel(file.name),
     size: formatFileSize(file.size),
-    status: 'Parsing complete',
+    status: parsedText ? 'Parsing complete' : 'Text extraction unavailable',
     uploaded: new Date().toLocaleString(),
     objectUrl: URL.createObjectURL(file),
+    parsedText,
   }
 }
 
@@ -28,15 +46,14 @@ function isPreviewable(material) {
   return ['PDF', 'TXT'].includes(material.type)
 }
 
-function UploadPanel({ materials }) {
-  const [materialItems, setMaterialItems] = useState(materials)
+function UploadPanel({ materials, onMaterialsChange }) {
   const [isDragging, setIsDragging] = useState(false)
   const [statusText, setStatusText] = useState('Drop a file or click Browse Files to upload.')
   const [previewMaterial, setPreviewMaterial] = useState(null)
   const inputRef = useRef(null)
   const createdObjectUrlsRef = useRef([])
 
-  const handleFiles = (files) => {
+  const handleFiles = async (files) => {
     const validFiles = Array.from(files || []).filter((file) => {
       const extension = file.name.split('.').pop()?.toLowerCase()
       return ['pdf', 'docx', 'txt'].includes(extension || '')
@@ -47,15 +64,20 @@ function UploadPanel({ materials }) {
       return
     }
 
-    const newMaterials = validFiles.map(buildMaterialFromFile)
+    const newMaterials = await Promise.all(validFiles.map(buildMaterialFromFile))
     newMaterials.forEach((material) => {
       if (material.objectUrl) {
         createdObjectUrlsRef.current.push(material.objectUrl)
       }
     })
-    const totalCount = materialItems.length + newMaterials.length
-    setMaterialItems((current) => [...newMaterials, ...current])
-    setStatusText(`Current total: ${totalCount} ${totalCount === 1 ? 'file' : 'files'} in Your materials.`)
+    const totalCount = materials.length + newMaterials.length
+    const unavailableCount = newMaterials.filter((material) => !material.parsedText).length
+    onMaterialsChange((current) => [...newMaterials, ...current])
+    setStatusText(
+      unavailableCount > 0
+        ? `Current total: ${totalCount} files. Text extraction unavailable for ${unavailableCount} file(s).`
+        : `Current total: ${totalCount} ${totalCount === 1 ? 'file' : 'files'} in Your materials.`
+    )
   }
 
   const handleBrowseClick = () => {
@@ -92,11 +114,12 @@ function UploadPanel({ materials }) {
     setPreviewMaterial(material)
   }
 
-  const fileCountLabel = `${materialItems.length} ${materialItems.length === 1 ? 'file' : 'files'}`
+  const fileCountLabel = `${materials.length} ${materials.length === 1 ? 'file' : 'files'}`
 
   useEffect(() => {
+    const objectUrls = createdObjectUrlsRef.current
     return () => {
-      createdObjectUrlsRef.current.forEach((url) => {
+      objectUrls.forEach((url) => {
         URL.revokeObjectURL(url)
       })
     }
@@ -144,7 +167,7 @@ function UploadPanel({ materials }) {
             <span className="muted">{fileCountLabel}</span>
           </div>
           <div className="materials-scroll">
-            {materialItems.map((material) => (
+            {materials.map((material) => (
               <div key={material.id} className="material-row">
                 <div>
                   <p className="material-title">{material.title}</p>
@@ -165,7 +188,7 @@ function UploadPanel({ materials }) {
                 </div>
               </div>
             ))}
-            {materialItems.length === 0 && (
+            {materials.length === 0 && (
               <div className="empty-state">
                 <p>No materials uploaded. Click Upload Material to add a file.</p>
                 <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
