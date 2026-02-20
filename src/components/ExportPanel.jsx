@@ -99,7 +99,9 @@ function ExportPanel({ questions, keptQuestionIds }) {
         </button>
       </div>
       {keptCount === 0 && (
-        <p className="muted">Select at least one question to enable PDF export.</p>
+        <div className="export-error">
+          <p>Select at least one question to enable PDF export.</p>
+        </div>
       )}
       {exportError && (
         <div className="export-error">
