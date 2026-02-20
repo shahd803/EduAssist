@@ -3,9 +3,10 @@
 import { useState } from 'react'
 
 function TestPreviewPanel({ questions }) {
+  const [generatedQuestions, setGeneratedQuestions] = useState(questions)
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
-  const questionCount = questions.length
+  const questionCount = generatedQuestions.length
 
   const handleSave = (event, question) => {
     event.preventDefault()
@@ -52,7 +53,7 @@ function TestPreviewPanel({ questions }) {
             <p>No questions generated yet. Use Generate Test to create your first set.</p>
           </div>
         )}
-        {questions.map((question) => (
+        {generatedQuestions.map((question) => (
           <article key={question.id} className="question-card">
             <div className="question-head">
               <div>
