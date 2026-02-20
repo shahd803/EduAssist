@@ -9,7 +9,7 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata = {
-  title: "Teacher Assist AI",
+  title: "EduAssist",
   description: "Frontend-only PRD prototype",
 };
 
