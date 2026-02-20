@@ -1,22 +1,46 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-function GenerateTestPanel() {
+function GenerateTestPanel({ materials }) {
   const [title, setTitle] = useState('')
   const [questionCount, setQuestionCount] = useState('')
   const [difficultyDistribution, setDifficultyDistribution] = useState('')
-  const [sourceText, setSourceText] = useState('')
   const [questionTypes, setQuestionTypes] = useState({
     multipleChoice: true,
     shortAnswer: true,
     trueFalse: false,
   })
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState([])
   const [generationError, setGenerationError] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
 
+  const materialsWithText = useMemo(
+    () => materials.filter((material) => Boolean(material.parsedText)),
+    [materials]
+  )
+  const parsableMaterialIds = useMemo(
+    () => materialsWithText.map((material) => material.id),
+    [materialsWithText]
+  )
+
+  useEffect(() => {
+    setSelectedMaterialIds((current) => {
+      const stillValid = current.filter((id) => parsableMaterialIds.includes(id))
+      return stillValid.length > 0 ? stillValid : parsableMaterialIds
+    })
+  }, [parsableMaterialIds])
+
   const handleTypeToggle = (key) => {
     setQuestionTypes((current) => ({ ...current, [key]: !current[key] }))
+  }
+
+  const handleMaterialToggle = (materialId) => {
+    setSelectedMaterialIds((current) =>
+      current.includes(materialId)
+        ? current.filter((id) => id !== materialId)
+        : [...current, materialId]
+    )
   }
 
   const handleGenerate = async () => {
@@ -38,10 +62,20 @@ function GenerateTestPanel() {
       return
     }
 
-    if (!sourceText.trim()) {
-      setGenerationError('Generation failed: Provide source text to generate from.')
+    if (materialsWithText.length === 0) {
+      setGenerationError('Generation failed: Upload at least one parsable material first.')
       return
     }
+
+    if (selectedMaterialIds.length === 0) {
+      setGenerationError('Generation failed: Select at least one uploaded material.')
+      return
+    }
+
+    const selectedMaterials = materialsWithText.filter((material) => selectedMaterialIds.includes(material.id))
+    const sourceText = selectedMaterials
+      .map((material) => `[${material.title}]\n${material.parsedText}`)
+      .join('\n\n')
 
     try {
       setIsGenerating(true)
@@ -159,31 +193,28 @@ function GenerateTestPanel() {
             <option>More Hard</option>
           </select>
         </label>
-        <label className="field">
-          <span className="label">Source text</span>
-          <textarea
-            rows="5"
-            value={sourceText}
-            onChange={(event) => setSourceText(event.target.value)}
-            placeholder="Paste the material text to generate questions from"
-          />
-        </label>
         <div className="field">
-          <span className="label">Source paragraphs</span>
+          <span className="label">Source materials</span>
           <div className="check-grid">
-            <label className="checkbox">
-              <input type="checkbox" />
-              <span>Paragraph 1</span>
-            </label>
-            <label className="checkbox">
-              <input type="checkbox" />
-              <span>Paragraph 2</span>
-            </label>
-            <label className="checkbox">
-              <input type="checkbox" />
-              <span>Paragraph 3</span>
-            </label>
+            {materials.length === 0 && <p className="muted">No uploaded materials yet.</p>}
+            {materials.map((material) => {
+              const hasParsedText = Boolean(material.parsedText)
+              return (
+                <label key={material.id} className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedMaterialIds.includes(material.id)}
+                    onChange={() => handleMaterialToggle(material.id)}
+                    disabled={!hasParsedText}
+                  />
+                  <span>{material.title}</span>
+                </label>
+              )
+            })}
           </div>
+          {materials.some((material) => !material.parsedText) && (
+            <p className="muted">Some files could not be parsed to text and are not selectable.</p>
+          )}
         </div>
         <div className="form-actions">
           <button className="btn btn-primary" onClick={handleGenerate} disabled={isGenerating}>
