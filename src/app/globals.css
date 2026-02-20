@@ -619,6 +619,16 @@ input[type='number'] {
   flex-wrap: wrap;
 }
 
+.question-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.question-actions .btn {
+  width: 100%;
+}
+
 .full {
   width: 100%;
 }

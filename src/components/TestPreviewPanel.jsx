@@ -20,10 +20,10 @@ function TestPreviewPanel({ questions }) {
                 <h3>{question.prompt}</h3>
                 <p className="muted">{question.source} • Difficulty: {question.difficulty}</p>
               </div>
-              <div className="button-stack">
-                <button className="btn btn-outline">Edit</button>
-                <button className="btn btn-primary">Regenerate</button>
-                <button className="btn btn-success">Mark Correct</button>
+              <div className="button-stack question-actions">
+                <button className="btn btn-ghost">Edit</button>
+                <button className="btn btn-ghost">Regenerate</button>
+                <button className="btn btn-ghost">Mark Correct</button>
               </div>
             </div>
             {question.choices && (
