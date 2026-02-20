@@ -117,7 +117,7 @@ function UploadPanel({ materials }) {
             <div key={material.id} className="material-row">
               <div>
                 <p className="material-title">{material.title}</p>
-                <p className="muted">{material.type} • {material.size} • {material.uploaded}</p>
+                <p className="muted">{material.type} - {material.size} - {material.uploaded}</p>
               </div>
               <div className="status-stack">
                 <span className={material.status === 'Parsing complete' ? 'status-pill success' : 'status-pill muted'}>
