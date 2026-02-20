@@ -12,6 +12,21 @@ import { materials as initialMaterials, questions } from '@/data/sampleData'
 
 export default function Home() {
   const [materials, setMaterials] = useState(initialMaterials)
+  const [generatedQuestions, setGeneratedQuestions] = useState(questions)
+  const [keptQuestionIds, setKeptQuestionIds] = useState([])
+
+  const handleQuestionsGenerated = (nextQuestions) => {
+    setGeneratedQuestions(nextQuestions)
+    setKeptQuestionIds([])
+  }
+
+  const handleToggleKeep = (questionId) => {
+    setKeptQuestionIds((current) =>
+      current.includes(questionId)
+        ? current.filter((id) => id !== questionId)
+        : [...current, questionId]
+    )
+  }
 
   return (
     <div className="app">
@@ -20,9 +35,13 @@ export default function Home() {
 
       <main className="content">
         <UploadPanel materials={materials} onMaterialsChange={setMaterials} />
-        <GenerateTestPanel materials={materials} />
-        <TestPreviewPanel questions={questions} />
-        <ExportPanel />
+        <GenerateTestPanel materials={materials} onQuestionsGenerated={handleQuestionsGenerated} />
+        <TestPreviewPanel
+          questions={generatedQuestions}
+          keptQuestionIds={keptQuestionIds}
+          onToggleKeep={handleToggleKeep}
+        />
+        <ExportPanel questions={generatedQuestions} keptQuestionIds={keptQuestionIds} />
       </main>
 
       <Footer />

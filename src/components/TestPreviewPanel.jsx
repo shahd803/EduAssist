@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-function TestPreviewPanel({ questions }) {
-  const [generatedQuestions, setGeneratedQuestions] = useState(questions)
+function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
-  const questionCount = generatedQuestions.length
+  const questionCount = questions.length
 
   const handleSave = (event, question) => {
     event.preventDefault()
@@ -33,26 +32,6 @@ function TestPreviewPanel({ questions }) {
     setSavedState((current) => ({ ...current, [question.id]: true }))
   }
 
-  useEffect(() => {
-    const handleQuestionsGenerated = (event) => {
-      const nextQuestions = event?.detail?.questions
-      if (Array.isArray(nextQuestions)) {
-        setGeneratedQuestions(nextQuestions)
-        setValidationErrors({})
-        setSavedState({})
-      }
-    }
-
-    window.addEventListener('eduassist:questions-generated', handleQuestionsGenerated)
-    return () => {
-      window.removeEventListener('eduassist:questions-generated', handleQuestionsGenerated)
-    }
-  }, [])
-
-  useEffect(() => {
-    setGeneratedQuestions(questions)
-  }, [questions])
-
   return (
     <section className="panel">
       <div className="panel-header">
@@ -73,7 +52,9 @@ function TestPreviewPanel({ questions }) {
             <p>No questions generated yet. Use Generate Test to create your first set.</p>
           </div>
         )}
-        {generatedQuestions.map((question) => (
+        {questions.map((question) => {
+          const isKept = keptQuestionIds.includes(question.id)
+          return (
           <article key={question.id} className="question-card">
             <div className="question-head">
               <div>
@@ -84,7 +65,13 @@ function TestPreviewPanel({ questions }) {
               <div className="button-stack question-actions">
                 <button className="btn btn-ghost">Edit</button>
                 <button className="btn btn-ghost">Refine</button>
-                <button className="btn btn-ghost">Keep</button>
+                <button
+                  type="button"
+                  className={`btn ${isKept ? 'btn-primary' : 'btn-ghost'}`}
+                  onClick={() => onToggleKeep(question.id)}
+                >
+                  {isKept ? 'Kept' : 'Keep'}
+                </button>
               </div>
             </div>
             {question.choices && (
@@ -123,7 +110,7 @@ function TestPreviewPanel({ questions }) {
               )}
             </form>
           </article>
-        ))}
+        )})}
       </div>
     </section>
   )

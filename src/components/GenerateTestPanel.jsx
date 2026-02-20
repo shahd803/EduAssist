@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-function GenerateTestPanel({ materials }) {
+function GenerateTestPanel({ materials, onQuestionsGenerated }) {
   const [title, setTitle] = useState('')
   const [questionCount, setQuestionCount] = useState('')
   const [difficultyDistribution, setDifficultyDistribution] = useState('')
@@ -106,13 +106,7 @@ function GenerateTestPanel({ materials }) {
         return
       }
 
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(
-          new CustomEvent('eduassist:questions-generated', {
-            detail: { questions: payload.questions },
-          })
-        )
-      }
+      onQuestionsGenerated(payload.questions)
     } catch (error) {
       setGenerationError(`Generation failed: ${error.message}`)
     } finally {
