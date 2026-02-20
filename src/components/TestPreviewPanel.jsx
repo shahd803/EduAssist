@@ -22,8 +22,8 @@ function TestPreviewPanel({ questions }) {
               </div>
               <div className="button-stack question-actions">
                 <button className="btn btn-ghost">Edit</button>
-                <button className="btn btn-ghost">Regenerate</button>
-                <button className="btn btn-ghost">Mark Correct</button>
+                <button className="btn btn-ghost">Refine</button>
+                <button className="btn btn-ghost">Keep</button>
               </div>
             </div>
             {question.choices && (
