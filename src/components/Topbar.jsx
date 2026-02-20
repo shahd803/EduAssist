@@ -11,6 +11,7 @@ function Topbar() {
         </div>
       </div>
       <nav className="topbar-actions">
+        <button className="btn btn-ghost">My Tests</button>
         <Link href="/settings" className="btn btn-ghost">Settings</Link>
       </nav>
     </header>
