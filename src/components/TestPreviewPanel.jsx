@@ -68,7 +68,7 @@ function TestPreviewPanel({ questions }) {
             <form className="edit-form" onSubmit={(event) => handleSave(event, question)}>
               <label className="field">
                 <span className="label">Prompt</span>
-                <textarea rows="3" defaultValue={question.prompt} />
+                <textarea rows="3" placeholder="Edit question prompt" />
               </label>
               {question.choices && (
                 <div className="choice-editor">
@@ -80,9 +80,8 @@ function TestPreviewPanel({ questions }) {
                           type="radio"
                           name={`${question.id}-choice`}
                           value={choice}
-                          defaultChecked={choice === 'ATP'}
                         />
-                        <input type="text" name={`${question.id}-choice-text`} defaultValue={choice} />
+                        <input type="text" name={`${question.id}-choice-text`} placeholder="Enter choice text" />
                       </label>
                     ))}
                   </div>

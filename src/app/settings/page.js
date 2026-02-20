@@ -22,11 +22,11 @@ export default function SettingsPage() {
               <h3>Profile</h3>
               <label className="field">
                 <span className="label">Display name</span>
-                <input type="text" defaultValue="Teacher Workspace" />
+                <input type="text" placeholder="Enter display name" />
               </label>
               <label className="field">
                 <span className="label">School / Org</span>
-                <input type="text" defaultValue="Demo Academy" />
+                <input type="text" placeholder="Enter school or organization" />
               </label>
             </section>
 
@@ -34,11 +34,12 @@ export default function SettingsPage() {
               <h3>Generation Defaults</h3>
               <label className="field">
                 <span className="label">Default number of questions</span>
-                <input type="number" min="1" max="100" step="1" defaultValue="10" />
+                <input type="number" min="1" max="100" step="1" placeholder="e.g. 20" />
               </label>
               <label className="field">
                 <span className="label">Default difficulty mix</span>
-                <select defaultValue="Even">
+                <select defaultValue="">
+                  <option value="" disabled>Select difficulty mix</option>
                   <option>Even</option>
                   <option>More Easy</option>
                   <option>More Hard</option>
@@ -50,11 +51,11 @@ export default function SettingsPage() {
               <h3>Notifications</h3>
               <div className="check-grid">
                 <label className="checkbox">
-                  <input type="checkbox" defaultChecked />
+                  <input type="checkbox" />
                   <span>Email when export is ready</span>
                 </label>
                 <label className="checkbox">
-                  <input type="checkbox" defaultChecked />
+                  <input type="checkbox" />
                   <span>Alert on generation failure</span>
                 </label>
                 <label className="checkbox">
@@ -68,7 +69,7 @@ export default function SettingsPage() {
               <h3>Privacy</h3>
               <div className="check-grid">
                 <label className="checkbox">
-                  <input type="checkbox" defaultChecked />
+                  <input type="checkbox" />
                   <span>Allow anonymous quality analytics</span>
                 </label>
                 <label className="checkbox">
