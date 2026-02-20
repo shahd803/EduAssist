@@ -115,6 +115,7 @@ function UploadPanel({ materials, onMaterialsChange }) {
   }
 
   const handleRemoveMaterial = (materialId) => {
+    const nextCount = Math.max(0, materials.length - 1)
     onMaterialsChange((current) => {
       const target = current.find((item) => item.id === materialId)
       if (target?.objectUrl) {
@@ -122,11 +123,9 @@ function UploadPanel({ materials, onMaterialsChange }) {
         createdObjectUrlsRef.current = createdObjectUrlsRef.current.filter((url) => url !== target.objectUrl)
       }
 
-      const next = current.filter((item) => item.id !== materialId)
-      const count = next.length
-      setStatusText(`Current total: ${count} ${count === 1 ? 'file' : 'files'} in Your materials.`)
-      return next
+      return current.filter((item) => item.id !== materialId)
     })
+    setStatusText(`Current total: ${nextCount} ${nextCount === 1 ? 'file' : 'files'} in Your materials.`)
 
     if (previewMaterial?.id === materialId) {
       setPreviewMaterial(null)
