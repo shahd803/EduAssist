@@ -1,21 +1,4 @@
-export const materials = [
-  {
-    id: 'mat-001',
-    title: 'World History Unit 3.pdf',
-    type: 'PDF',
-    size: '2.4 MB',
-    status: 'Parsing complete',
-    uploaded: 'Today at 2:14 PM',
-  },
-  {
-    id: 'mat-002',
-    title: 'Photosynthesis Notes.docx',
-    type: 'DOCX',
-    size: '1.1 MB',
-    status: 'Parsing...',
-    uploaded: 'Today at 9:05 AM',
-  },
-]
+export const materials = []
 
 export const questions = [
   {
