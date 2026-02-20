@@ -60,10 +60,6 @@ function SettingsFormPanel() {
           <div className="check-grid">
             <label className="checkbox">
               <input type="checkbox" />
-              <span>Allow anonymous quality analytics</span>
-            </label>
-            <label className="checkbox">
-              <input type="checkbox" />
               <span>Store uploaded files for reuse</span>
             </label>
           </div>
