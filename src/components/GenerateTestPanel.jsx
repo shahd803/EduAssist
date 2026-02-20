@@ -15,11 +15,7 @@ function GenerateTestPanel() {
         </label>
         <label className="field">
           <span className="label">Number of questions</span>
-          <select defaultValue="10">
-            <option>5</option>
-            <option>10</option>
-            <option>15</option>
-          </select>
+          <input type="number" min="1" max="100" step="1" defaultValue="10" />
         </label>
         <div className="field">
           <span className="label">Question types</span>
