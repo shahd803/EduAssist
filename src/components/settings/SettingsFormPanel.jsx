@@ -52,10 +52,6 @@ function SettingsFormPanel() {
               <input type="checkbox" />
               <span>Alert on generation failure</span>
             </label>
-            <label className="checkbox">
-              <input type="checkbox" />
-              <span>Weekly usage summary</span>
-            </label>
           </div>
         </section>
 
