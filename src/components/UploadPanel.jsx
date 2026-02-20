@@ -41,8 +41,11 @@ function UploadPanel({ materials }) {
     }
 
     const newMaterials = validFiles.map(buildMaterialFromFile)
+    const totalCount = materialItems.length + newMaterials.length
     setMaterialItems((current) => [...newMaterials, ...current])
-    setStatusText(`Uploaded ${validFiles.length} ${validFiles.length === 1 ? 'file' : 'files'} successfully.`)
+    setStatusText(
+      `Uploaded ${validFiles.length} ${validFiles.length === 1 ? 'file' : 'files'} successfully. ${totalCount} total ${totalCount === 1 ? 'file' : 'files'} in Your materials.`
+    )
   }
 
   const handleBrowseClick = () => {
