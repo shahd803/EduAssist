@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer className="footer">
-      <p>All actions require teacher authentication. No student delivery or grading in V1.</p>
+      <p>EduAssist © 2026. All rights reserved</p>
     </footer>
   )
 }
