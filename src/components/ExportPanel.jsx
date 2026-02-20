@@ -19,7 +19,7 @@ function ExportPanel({ questions, keptQuestionIds }) {
 
     const keptQuestions = questions.filter((question) => selectedKeepIds.includes(question.id))
     if (keptQuestions.length === 0) {
-      setExportError('Export failed: Select Keep on at least one question before exporting.')
+      setExportError('Export failed: Select at least one question before exporting.')
       return
     }
 
