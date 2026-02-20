@@ -3,13 +3,19 @@
 import { useState } from 'react'
 import { jsPDF } from 'jspdf'
 
-function ExportPanel({ questions }) {
+function ExportPanel({ questions, keptQuestionIds }) {
   const [exportError, setExportError] = useState('')
   const [isExporting, setIsExporting] = useState(false)
 
   const handleDownload = () => {
     if (!Array.isArray(questions) || questions.length === 0) {
       setExportError('Export failed: No generated questions to export yet.')
+      return
+    }
+
+    const keptQuestions = questions.filter((question) => keptQuestionIds.includes(question.id))
+    if (keptQuestions.length === 0) {
+      setExportError('Export failed: Select Keep on at least one question before exporting.')
       return
     }
 
@@ -46,10 +52,10 @@ function ExportPanel({ questions }) {
       doc.text('Generated Test', startX, y)
       y += 24
       doc.setFont('helvetica', 'normal')
-      writeWrapped(`${questions.length} questions`, 11, 16)
+      writeWrapped(`${keptQuestions.length} kept questions`, 11, 16)
       y += 8
 
-      questions.forEach((question, index) => {
+      keptQuestions.forEach((question, index) => {
         addPageIfNeeded(56)
         doc.setFont('helvetica', 'bold')
         writeWrapped(`Q${index + 1} - ${question.type} - ${question.difficulty}`, 11, 16)
