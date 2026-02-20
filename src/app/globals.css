@@ -231,6 +231,14 @@ textarea {
   gap: 1rem;
 }
 
+.materials-scroll {
+  display: grid;
+  gap: 1rem;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
 .list-header {
   display: flex;
   justify-content: space-between;
