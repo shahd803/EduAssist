@@ -12,7 +12,7 @@ function Topbar() {
       </div>
       <nav className="topbar-actions">
         <Link href="/settings" className="btn btn-ghost">Settings</Link>
-        <button className="btn btn-ghost">Help</button>
+        <Link href="/settings?tab=help" className="btn btn-ghost">Help</Link>
       </nav>
     </header>
   )
