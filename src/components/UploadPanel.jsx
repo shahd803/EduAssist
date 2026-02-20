@@ -113,26 +113,28 @@ function UploadPanel({ materials }) {
             <h3>Your materials</h3>
             <span className="muted">{fileCountLabel}</span>
           </div>
-          {materialItems.map((material) => (
-            <div key={material.id} className="material-row">
-              <div>
-                <p className="material-title">{material.title}</p>
-                <p className="muted">{material.type} - {material.size} - {material.uploaded}</p>
+          <div className="materials-scroll">
+            {materialItems.map((material) => (
+              <div key={material.id} className="material-row">
+                <div>
+                  <p className="material-title">{material.title}</p>
+                  <p className="muted">{material.type} - {material.size} - {material.uploaded}</p>
+                </div>
+                <div className="status-stack">
+                  <span className={material.status === 'Parsing complete' ? 'status-pill success' : 'status-pill muted'}>
+                    {material.status}
+                  </span>
+                  <button className="btn btn-outline small">View</button>
+                </div>
               </div>
-              <div className="status-stack">
-                <span className={material.status === 'Parsing complete' ? 'status-pill success' : 'status-pill muted'}>
-                  {material.status}
-                </span>
-                <button className="btn btn-outline small">View</button>
+            ))}
+            {materialItems.length === 0 && (
+              <div className="empty-state">
+                <p>No materials uploaded. Click Upload Material to add a file.</p>
+                <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
               </div>
-            </div>
-          ))}
-          {materialItems.length === 0 && (
-            <div className="empty-state">
-              <p>No materials uploaded. Click Upload Material to add a file.</p>
-              <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </section>
