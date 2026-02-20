@@ -95,8 +95,9 @@ function UploadPanel({ materials }) {
   const fileCountLabel = `${materialItems.length} ${materialItems.length === 1 ? 'file' : 'files'}`
 
   useEffect(() => {
+    const objectUrls = createdObjectUrlsRef.current
     return () => {
-      createdObjectUrlsRef.current.forEach((url) => {
+      objectUrls.forEach((url) => {
         URL.revokeObjectURL(url)
       })
     }
