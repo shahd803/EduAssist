@@ -17,10 +17,6 @@ function Hero() {
             <p className="metric-value">3</p>
             <p className="metric-label">Question types</p>
           </div>
-          <div>
-            <p className="metric-value">PDF</p>
-            <p className="metric-label">Export ready</p>
-          </div>
         </div>
       </div>
     </section>
