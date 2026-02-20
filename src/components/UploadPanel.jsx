@@ -114,6 +114,25 @@ function UploadPanel({ materials, onMaterialsChange }) {
     setPreviewMaterial(material)
   }
 
+  const handleRemoveMaterial = (materialId) => {
+    onMaterialsChange((current) => {
+      const target = current.find((item) => item.id === materialId)
+      if (target?.objectUrl) {
+        URL.revokeObjectURL(target.objectUrl)
+        createdObjectUrlsRef.current = createdObjectUrlsRef.current.filter((url) => url !== target.objectUrl)
+      }
+
+      const next = current.filter((item) => item.id !== materialId)
+      const count = next.length
+      setStatusText(`Current total: ${count} ${count === 1 ? 'file' : 'files'} in Your materials.`)
+      return next
+    })
+
+    if (previewMaterial?.id === materialId) {
+      setPreviewMaterial(null)
+    }
+  }
+
   const fileCountLabel = `${materials.length} ${materials.length === 1 ? 'file' : 'files'}`
 
   useEffect(() => {
@@ -184,6 +203,12 @@ function UploadPanel({ materials, onMaterialsChange }) {
                     title={material.objectUrl ? 'Open file' : 'Preview unavailable'}
                   >
                     View
+                  </button>
+                  <button
+                    className="btn btn-outline small"
+                    onClick={() => handleRemoveMaterial(material.id)}
+                  >
+                    Remove
                   </button>
                 </div>
               </div>
