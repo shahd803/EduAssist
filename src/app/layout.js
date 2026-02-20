@@ -10,7 +10,7 @@ const sourceCodePro = Source_Code_Pro({
 
 export const metadata = {
   title: "EduAssist",
-  description: "Frontend-only PRD prototype",
+  description: "Use AI to generate your tests",
 };
 
 export default function RootLayout({ children }) {
