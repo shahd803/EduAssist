@@ -94,15 +94,10 @@ function ExportPanel({ questions, keptQuestionIds }) {
         <p className="muted">Download PDF with questions and answer key.</p>
       </div>
       <div className="export-actions">
-        <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting || keptCount === 0}>
+        <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting}>
           {isExporting ? 'Exporting...' : 'Download PDF'}
         </button>
       </div>
-      {keptCount === 0 && (
-        <div className="export-error">
-          <p>Select at least one question to enable PDF export.</p>
-        </div>
-      )}
       {exportError && (
         <div className="export-error">
           <p>{exportError}</p>
