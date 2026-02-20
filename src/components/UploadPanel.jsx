@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function formatFileSize(bytes) {
   if (!bytes || bytes < 0) return '0 MB'
@@ -20,14 +20,21 @@ function buildMaterialFromFile(file) {
     size: formatFileSize(file.size),
     status: 'Parsing complete',
     uploaded: new Date().toLocaleString(),
+    objectUrl: URL.createObjectURL(file),
   }
+}
+
+function isPreviewable(material) {
+  return ['PDF', 'TXT'].includes(material.type)
 }
 
 function UploadPanel({ materials }) {
   const [materialItems, setMaterialItems] = useState(materials)
   const [isDragging, setIsDragging] = useState(false)
   const [statusText, setStatusText] = useState('Drop a file or click Browse Files to upload.')
+  const [previewMaterial, setPreviewMaterial] = useState(null)
   const inputRef = useRef(null)
+  const createdObjectUrlsRef = useRef([])
 
   const handleFiles = (files) => {
     const validFiles = Array.from(files || []).filter((file) => {
@@ -41,6 +48,11 @@ function UploadPanel({ materials }) {
     }
 
     const newMaterials = validFiles.map(buildMaterialFromFile)
+    newMaterials.forEach((material) => {
+      if (material.objectUrl) {
+        createdObjectUrlsRef.current.push(material.objectUrl)
+      }
+    })
     const totalCount = materialItems.length + newMaterials.length
     setMaterialItems((current) => [...newMaterials, ...current])
     setStatusText(`Current total: ${totalCount} ${totalCount === 1 ? 'file' : 'files'} in Your materials.`)
@@ -71,7 +83,24 @@ function UploadPanel({ materials }) {
     setIsDragging(false)
   }
 
+  const handleViewMaterial = (material) => {
+    if (!material.objectUrl) {
+      setStatusText('This file cannot be previewed in the browser.')
+      return
+    }
+
+    setPreviewMaterial(material)
+  }
+
   const fileCountLabel = `${materialItems.length} ${materialItems.length === 1 ? 'file' : 'files'}`
+
+  useEffect(() => {
+    return () => {
+      createdObjectUrlsRef.current.forEach((url) => {
+        URL.revokeObjectURL(url)
+      })
+    }
+  }, [])
 
   return (
     <section className="panel">
@@ -125,7 +154,14 @@ function UploadPanel({ materials }) {
                   <span className={material.status === 'Parsing complete' ? 'status-pill success' : 'status-pill muted'}>
                     {material.status}
                   </span>
-                  <button className="btn btn-outline small">View</button>
+                  <button
+                    className="btn btn-outline small"
+                    onClick={() => handleViewMaterial(material)}
+                    disabled={!material.objectUrl}
+                    title={material.objectUrl ? 'Open file' : 'Preview unavailable'}
+                  >
+                    View
+                  </button>
                 </div>
               </div>
             ))}
@@ -138,6 +174,28 @@ function UploadPanel({ materials }) {
           </div>
         </div>
       </div>
+      {previewMaterial && (
+        <div className="preview-modal-overlay" onClick={() => setPreviewMaterial(null)}>
+          <div className="preview-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="preview-modal-header">
+              <h3>{previewMaterial.title}</h3>
+              <button className="btn btn-outline small" onClick={() => setPreviewMaterial(null)}>Close</button>
+            </div>
+            <div className="preview-modal-body">
+              {isPreviewable(previewMaterial) ? (
+                <iframe title={previewMaterial.title} src={previewMaterial.objectUrl} className="preview-frame" />
+              ) : (
+                <div className="empty-state">
+                  <p>This file type cannot be previewed directly in the browser.</p>
+                  <a className="btn btn-primary" href={previewMaterial.objectUrl} download={previewMaterial.title}>
+                    Download File
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
