@@ -17,12 +17,6 @@ export const materials = [
   },
 ]
 
-export const previewParagraphs = [
-  'Plants convert light energy into chemical energy stored in glucose. This process takes place in the chloroplasts and involves the pigments chlorophyll a and b.',
-  'During the light-dependent reactions, water is split to release oxygen and produce ATP and NADPH. The Calvin cycle uses these molecules to fix carbon dioxide.',
-  'Key limiting factors for photosynthesis include light intensity, carbon dioxide concentration, and temperature. These factors can constrain the rate of glucose production.',
-]
-
 export const questions = [
   {
     id: 'q-01',
