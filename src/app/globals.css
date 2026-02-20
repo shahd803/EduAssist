@@ -628,9 +628,10 @@ input[type='number'] {
 
 .question-actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 0.5rem;
   flex: 0 0 auto;
+  width: min(100%, 420px);
 }
 
 .question-actions .btn {
@@ -718,6 +719,10 @@ input[type='number'] {
 
   .panel {
     padding: 1.25rem;
+  }
+
+  .question-actions {
+    width: 100%;
   }
 
   .preview-modal {
