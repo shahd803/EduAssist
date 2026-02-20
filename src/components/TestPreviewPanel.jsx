@@ -5,6 +5,7 @@ import { useState } from 'react'
 function TestPreviewPanel({ questions }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
+  const questionCount = questions.length
 
   const handleSave = (event, question) => {
     event.preventDefault()
@@ -36,7 +37,9 @@ function TestPreviewPanel({ questions }) {
       <div className="panel-header">
         <div>
           <h2>Test Preview</h2>
-          <p className="muted">10 questions • Updated moments ago</p>
+          <p className="muted">
+            {questionCount > 0 ? `${questionCount} questions ready for review` : 'No generated questions yet'}
+          </p>
         </div>
         <div className="button-stack">
           <button className="btn btn-outline">Edit Options</button>
@@ -44,13 +47,18 @@ function TestPreviewPanel({ questions }) {
         </div>
       </div>
       <div className="question-list">
+        {questionCount === 0 && (
+          <div className="empty-state">
+            <p>No questions generated yet. Use Generate Test to create your first set.</p>
+          </div>
+        )}
         {questions.map((question) => (
           <article key={question.id} className="question-card">
             <div className="question-head">
               <div>
                 <p className="label">{question.type}</p>
                 <h3>{question.prompt}</h3>
-                <p className="muted">{question.source} • Difficulty: {question.difficulty}</p>
+                <p className="muted">{question.source} - Difficulty: {question.difficulty}</p>
               </div>
               <div className="button-stack question-actions">
                 <button className="btn btn-ghost">Edit</button>
@@ -76,11 +84,7 @@ function TestPreviewPanel({ questions }) {
                   <div className="choice-grid">
                     {question.choices.map((choice) => (
                       <label key={choice} className="choice-item">
-                        <input
-                          type="radio"
-                          name={`${question.id}-choice`}
-                          value={choice}
-                        />
+                        <input type="radio" name={`${question.id}-choice`} value={choice} />
                         <input type="text" name={`${question.id}-choice-text`} placeholder="Enter choice text" />
                       </label>
                     ))}
