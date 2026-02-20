@@ -6,6 +6,10 @@ import { jsPDF } from 'jspdf'
 function ExportPanel({ questions, keptQuestionIds }) {
   const [exportError, setExportError] = useState('')
   const [isExporting, setIsExporting] = useState(false)
+  const selectedKeepIds = Array.isArray(keptQuestionIds) ? keptQuestionIds : []
+  const keptCount = Array.isArray(questions)
+    ? questions.filter((question) => selectedKeepIds.includes(question.id)).length
+    : 0
 
   const handleDownload = () => {
     if (!Array.isArray(questions) || questions.length === 0) {
@@ -13,7 +17,7 @@ function ExportPanel({ questions, keptQuestionIds }) {
       return
     }
 
-    const keptQuestions = questions.filter((question) => keptQuestionIds.includes(question.id))
+    const keptQuestions = questions.filter((question) => selectedKeepIds.includes(question.id))
     if (keptQuestions.length === 0) {
       setExportError('Export failed: Select Keep on at least one question before exporting.')
       return
@@ -90,10 +94,13 @@ function ExportPanel({ questions, keptQuestionIds }) {
         <p className="muted">Download PDF with questions and answer key.</p>
       </div>
       <div className="export-actions">
-        <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting}>
+        <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting || keptCount === 0}>
           {isExporting ? 'Exporting...' : 'Download PDF'}
         </button>
       </div>
+      {keptCount === 0 && (
+        <p className="muted">Select Keep on at least one question to enable PDF export.</p>
+      )}
       {exportError && (
         <div className="export-error">
           <p>{exportError}</p>
