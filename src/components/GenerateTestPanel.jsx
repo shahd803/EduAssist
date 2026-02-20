@@ -3,8 +3,8 @@
 import { useState } from 'react'
 
 function GenerateTestPanel() {
-  const [title, setTitle] = useState('Untitled Test')
-  const [questionCount, setQuestionCount] = useState('10')
+  const [title, setTitle] = useState('')
+  const [questionCount, setQuestionCount] = useState('')
   const [questionTypes, setQuestionTypes] = useState({
     multipleChoice: true,
     shortAnswer: true,
@@ -54,7 +54,12 @@ function GenerateTestPanel() {
       <div className="form-grid">
         <label className="field">
           <span className="label">Title</span>
-          <input type="text" value={title} onChange={(event) => setTitle(event.target.value)} />
+          <input
+            type="text"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Enter test title"
+          />
         </label>
         <label className="field">
           <span className="label">Number of questions</span>
@@ -65,6 +70,7 @@ function GenerateTestPanel() {
             step="1"
             value={questionCount}
             onChange={(event) => setQuestionCount(event.target.value)}
+            placeholder="e.g. 20"
           />
         </label>
         <div className="field">
@@ -98,7 +104,8 @@ function GenerateTestPanel() {
         </div>
         <label className="field">
           <span className="label">Difficulty distribution</span>
-          <select defaultValue="Even">
+          <select defaultValue="">
+            <option value="" disabled>Select difficulty mix</option>
             <option>Even</option>
             <option>More Easy</option>
             <option>More Hard</option>
@@ -108,15 +115,15 @@ function GenerateTestPanel() {
           <span className="label">Source paragraphs</span>
           <div className="check-grid">
             <label className="checkbox">
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" />
               <span>Paragraph 1</span>
             </label>
             <label className="checkbox">
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" />
               <span>Paragraph 2</span>
             </label>
             <label className="checkbox">
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" />
               <span>Paragraph 3</span>
             </label>
           </div>
