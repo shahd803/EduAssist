@@ -8,10 +8,6 @@ function Hero() {
           Upload PDF, DOCX, or TXT files, select your source content, and generate
           multiple-choice, short-answer, and true/false assessments with full editing control.
         </p>
-        <div className="hero-actions">
-          <button className="btn btn-primary">Start Parsing</button>
-          <button className="btn btn-outline">View Sample Test</button>
-        </div>
         <div className="hero-metrics">
           <div>
             <p className="metric-value">10 MB</p>
