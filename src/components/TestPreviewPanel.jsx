@@ -80,6 +80,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
         {questions.map((question) => {
           const isKept = keptQuestionIds.includes(question.id)
           const isEditing = Boolean(editingQuestionIds[question.id])
+          const selectedChoice = question.correctChoice
           return (
           <article key={question.id} className="question-card">
             <div className="question-head">
@@ -105,7 +106,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
             {question.choices && (
               <ul className="choice-list">
                 {question.choices.map((choice) => (
-                  <li key={choice}>
+                  <li key={choice} className={selectedChoice === choice ? 'is-correct' : ''}>
                     <label className="checkbox">
                       <input
                         type="radio"
@@ -123,6 +124,9 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                   </li>
                 ))}
               </ul>
+            )}
+            {question.choices && selectedChoice && (
+              <span className="status-pill success">Correct answer set</span>
             )}
             {isEditing && (
               <form className="edit-form" onSubmit={(event) => handleSave(event, question)}>
