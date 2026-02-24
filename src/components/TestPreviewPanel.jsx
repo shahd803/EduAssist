@@ -42,6 +42,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
           ...question,
           prompt: nextPrompt || question.prompt,
           choices: choiceValues,
+          correctChoice: selectedCorrect,
         })
       }
     } else if (onQuestionUpdate) {
@@ -104,7 +105,22 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
             {question.choices && (
               <ul className="choice-list">
                 {question.choices.map((choice) => (
-                  <li key={choice}>{choice}</li>
+                  <li key={choice}>
+                    <label className="checkbox">
+                      <input
+                        type="radio"
+                        name={`${question.id}-correct`}
+                        value={choice}
+                        checked={question.correctChoice === choice}
+                        onChange={() => {
+                          if (onQuestionUpdate) {
+                            onQuestionUpdate({ ...question, correctChoice: choice })
+                          }
+                        }}
+                      />
+                      <span>{choice}</span>
+                    </label>
+                  </li>
                 ))}
               </ul>
             )}
@@ -125,7 +141,12 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                     <div className="choice-grid">
                       {question.choices.map((choice) => (
                         <label key={choice} className="choice-item">
-                          <input type="radio" name={`${question.id}-choice`} value={choice} />
+                          <input
+                            type="radio"
+                            name={`${question.id}-choice`}
+                            value={choice}
+                            defaultChecked={question.correctChoice === choice}
+                          />
                           <input
                             type="text"
                             name={`${question.id}-choice-text`}

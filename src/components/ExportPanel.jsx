@@ -80,6 +80,21 @@ function ExportPanel({ questions, keptQuestionIds }) {
         y += 8
       })
 
+      doc.addPage()
+      y = 44
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.text('Answer Key', startX, y)
+      y += 20
+      doc.setFont('helvetica', 'normal')
+
+      keptQuestions.forEach((question, index) => {
+        const choices = Array.isArray(question.choices) ? question.choices : []
+        const correctIndex = choices.findIndex((choice) => choice === question.correctChoice)
+        const correctLabel = correctIndex >= 0 ? `${String.fromCharCode(65 + correctIndex)}. ${choices[correctIndex]}` : 'Not set'
+        writeWrapped(`Q${index + 1}: ${correctLabel}`, 11, 16)
+      })
+
       doc.save('eduassist-generated-test.pdf')
     } catch (error) {
       setExportError(`Export failed: ${error.message}`)
