@@ -29,6 +29,12 @@ export default function Home() {
     )
   }
 
+  const handleQuestionUpdate = (updatedQuestion) => {
+    setGeneratedQuestions((current) =>
+      current.map((question) => (question.id === updatedQuestion.id ? updatedQuestion : question))
+    )
+  }
+
   return (
     <div className="app">
       <Topbar />
@@ -41,6 +47,7 @@ export default function Home() {
           questions={generatedQuestions}
           keptQuestionIds={keptQuestionIds}
           onToggleKeep={handleToggleKeep}
+          onQuestionUpdate={handleQuestionUpdate}
         />
         <ExportPanel questions={generatedQuestions} keptQuestionIds={keptQuestionIds} />
       </main>
