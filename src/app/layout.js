@@ -1,3 +1,4 @@
+// Intent: Root layout wiring fonts, metadata, and global styles.
 import { Inter, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
 

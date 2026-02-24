@@ -1,3 +1,4 @@
+// Intent: Home page composition and state wiring for the main workflow.
 "use client"
 
 import { useState } from 'react'

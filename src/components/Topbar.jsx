@@ -1,3 +1,4 @@
+// Intent: Top navigation bar for primary app routes.
 import Link from 'next/link'
 
 function Topbar() {

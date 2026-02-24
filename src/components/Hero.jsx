@@ -1,3 +1,4 @@
+// Intent: Hero copy and highlights for the landing experience.
 function Hero() {
   return (
     <section className="hero">

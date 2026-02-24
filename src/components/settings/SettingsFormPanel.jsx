@@ -1,3 +1,4 @@
+// Intent: Settings form sections for profile and defaults.
 import Link from 'next/link'
 
 function SettingsFormPanel() {

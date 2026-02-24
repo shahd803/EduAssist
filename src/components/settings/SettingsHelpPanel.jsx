@@ -1,3 +1,4 @@
+// Intent: Help and FAQ content for settings.
 function SettingsHelpPanel() {
   return (
     <section className="panel settings-panel">

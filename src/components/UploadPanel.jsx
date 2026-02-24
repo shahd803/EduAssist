@@ -1,4 +1,4 @@
-"use client"
+"use client" //client side vs server side implementation
 
 import { useEffect, useRef, useState } from 'react'
 

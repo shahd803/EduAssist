@@ -1,3 +1,4 @@
+// Intent: Configure test generation options and trigger the API call.
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'

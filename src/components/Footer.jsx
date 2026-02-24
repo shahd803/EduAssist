@@ -1,3 +1,4 @@
+// Intent: Footer content for the app shell.
 function Footer() {
   return (
     <footer className="footer">

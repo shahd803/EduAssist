@@ -1,3 +1,4 @@
+// Intent: Settings page layout that assembles settings panels.
 import Topbar from '@/components/Topbar'
 import Footer from '@/components/Footer'
 import SettingsFormPanel from '@/components/settings/SettingsFormPanel'

@@ -1,3 +1,4 @@
+// Intent: Preview, edit, and keep generated questions before export.
 "use client"
 
 import { useState } from 'react'
