@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 
-function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
+function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestionUpdate }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
   const [editingQuestionIds, setEditingQuestionIds] = useState({})
@@ -19,6 +19,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
   const handleSave = (event, question) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
+    const nextPrompt = String(formData.get(`${question.id}-prompt`) || '').trim()
 
     if (question.choices) {
       const choiceValues = formData
@@ -35,6 +36,19 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
         setSavedState((current) => ({ ...current, [question.id]: false }))
         return
       }
+
+      if (onQuestionUpdate) {
+        onQuestionUpdate({
+          ...question,
+          prompt: nextPrompt || question.prompt,
+          choices: choiceValues,
+        })
+      }
+    } else if (onQuestionUpdate) {
+      onQuestionUpdate({
+        ...question,
+        prompt: nextPrompt || question.prompt,
+      })
     }
 
     setValidationErrors((current) => ({ ...current, [question.id]: '' }))
@@ -98,7 +112,12 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
               <form className="edit-form" onSubmit={(event) => handleSave(event, question)}>
                 <label className="field">
                   <span className="label">Prompt</span>
-                  <textarea rows="3" placeholder="Edit question prompt" />
+                  <textarea
+                    name={`${question.id}-prompt`}
+                    rows="3"
+                    placeholder="Edit question prompt"
+                    defaultValue={question.prompt}
+                  />
                 </label>
                 {question.choices && (
                   <div className="choice-editor">
@@ -107,7 +126,12 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep }) {
                       {question.choices.map((choice) => (
                         <label key={choice} className="choice-item">
                           <input type="radio" name={`${question.id}-choice`} value={choice} />
-                          <input type="text" name={`${question.id}-choice-text`} placeholder="Enter choice text" />
+                          <input
+                            type="text"
+                            name={`${question.id}-choice-text`}
+                            placeholder="Enter choice text"
+                            defaultValue={choice}
+                          />
                         </label>
                       ))}
                     </div>
