@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import styles from "./LandingPage.module.css";
 
 export default function LandingPage() {
@@ -25,7 +26,9 @@ export default function LandingPage() {
             Boost your teaching efficiency with AI-powered tools to manage
             classrooms, create quizzes, and analyze student performance.
           </p>
-          <button className={styles.primaryBtn}>Get Started for Free</button>
+          <Link href="/app" className={styles.primaryBtn}>
+            Get Started for Free
+          </Link>
           <span className={styles.note}>No credit card required</span>
         </div>
       </section>
