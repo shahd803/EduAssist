@@ -30,4 +30,40 @@ export default function LandingPage() {
         </div>
       </section>
 
+            {/* Features Section */}
+      <section className="features">
+        <h2>How EduAssist AI Helps Teachers</h2>
+
+        <div className="feature-cards">
+          <div className="card">
+            <h3>Generate Quizzes Instantly</h3>
+            <p>
+              Create custom quizzes in seconds with AI-generated questions
+              tailored to your lessons.
+            </p>
+          </div>
+
+          <div className="card">
+            <h3>Get Insights on Student Performance</h3>
+            <p>
+              Track student progress and identify areas for improvement with
+              easy-to-read analytics.
+            </p>
+          </div>
+
+          <div className="card">
+            <h3>Save Time on Lesson Planning</h3>
+            <p>
+              Receive AI-generated lesson plans and teaching suggestions to
+              enhance your curriculum.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+}
+
+
 
