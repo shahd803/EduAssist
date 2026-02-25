@@ -44,18 +44,18 @@ export default function LandingPage() {
           </div>
 
           <div className="card">
-            <h3>Get Insights on Student Performance</h3>
+            <h3>Multiple Question Types</h3>
             <p>
-              Track student progress and identify areas for improvement with
-              easy-to-read analytics.
+              Choose from multiple-choice, true/false, and short answer
+                questions to match your teaching style.
             </p>
           </div>
 
           <div className="card">
-            <h3>Save Time on Lesson Planning</h3>
+            <h3>Export & Share Easily</h3>
             <p>
-              Receive AI-generated lesson plans and teaching suggestions to
-              enhance your curriculum.
+              Download your quizzes or share them with students and colleagues
+             directly from the app.
             </p>
           </div>
         </div>
