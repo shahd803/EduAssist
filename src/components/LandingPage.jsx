@@ -17,4 +17,17 @@ export default function LandingPage() {
           <button className="signup-btn">Sign Up</button>
         </ul>
       </nav>
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-text">
+          <h1>The AI Teacher Assistant for Smarter Teaching</h1>
+          <p>
+            Boost your teaching efficiency with AI-powered tools to manage
+            classrooms, create quizzes, and analyze student performance.
+          </p>
+          <button className="primary-btn">Get Started for Free</button>
+          <span className="note">No credit card required</span>
+        </div>
+      </section>
+
 
