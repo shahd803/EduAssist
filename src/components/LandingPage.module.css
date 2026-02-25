@@ -1,8 +1,3 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
 .landing {
   background: linear-gradient(to bottom, #eaf3ff, #ffffff);
   min-height: 100vh;
@@ -23,18 +18,18 @@ body {
   color: #1e3a8a;
 }
 
-.nav-links {
+.navLinks {
   display: flex;
   align-items: center;
   gap: 20px;
   list-style: none;
 }
 
-.nav-links li {
+.navLinks li {
   cursor: pointer;
 }
 
-.signup-btn {
+.signupBtn {
   background-color: #2563eb;
   color: white;
   border: none;
@@ -62,7 +57,7 @@ body {
   color: #555;
 }
 
-.primary-btn {
+.primaryBtn {
   background-color: #2563eb;
   color: white;
   padding: 12px 24px;
@@ -89,7 +84,7 @@ body {
   color: #1e3a8a;
 }
 
-.feature-cards {
+.featureCards {
   display: flex;
   justify-content: center;
   gap: 20px;

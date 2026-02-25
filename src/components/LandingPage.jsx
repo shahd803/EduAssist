@@ -1,41 +1,41 @@
 import React from "react";
-import "./LandingPage.css";
+import styles from "./LandingPage.module.css";
 
 export default function LandingPage() {
   return (
-    <div className="landing">
+    <div className={styles.landing}>
 
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">EduAssist AI</div>
-        <ul className="nav-links">
+      <nav className={styles.navbar}>
+        <div className={styles.logo}>EduAssist AI</div>
+        <ul className={styles.navLinks}>
           <li>Home</li>
           <li>Features</li>
           <li>Pricing</li>
           <li>Resources</li>
           <li>Login</li>
-          <button className="signup-btn">Sign Up</button>
+          <button className={styles.signupBtn}>Sign Up</button>
         </ul>
       </nav>
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-text">
+      <section className={styles.hero}>
+        <div>
           <h1>The AI Teacher Assistant for Smarter Teaching</h1>
           <p>
             Boost your teaching efficiency with AI-powered tools to manage
             classrooms, create quizzes, and analyze student performance.
           </p>
-          <button className="primary-btn">Get Started for Free</button>
-          <span className="note">No credit card required</span>
+          <button className={styles.primaryBtn}>Get Started for Free</button>
+          <span className={styles.note}>No credit card required</span>
         </div>
       </section>
 
             {/* Features Section */}
-      <section className="features">
+      <section className={styles.features}>
         <h2>How EduAssist AI Helps Teachers</h2>
 
-        <div className="feature-cards">
-          <div className="card">
+        <div className={styles.featureCards}>
+          <div className={styles.card}>
             <h3>Generate Quizzes Instantly</h3>
             <p>
               Create custom quizzes in seconds with AI-generated questions
@@ -43,7 +43,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="card">
+          <div className={styles.card}>
             <h3>Multiple Question Types</h3>
             <p>
               Choose from multiple-choice, true/false, and short answer
@@ -51,7 +51,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="card">
+          <div className={styles.card}>
             <h3>Export & Share Easily</h3>
             <p>
               Download your quizzes or share them with students and colleagues
