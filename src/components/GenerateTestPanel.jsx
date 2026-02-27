@@ -2,6 +2,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
+import { generateQuiz } from '@/lib/api'
 
 function GenerateTestPanel({ materials, onQuestionsGenerated }) {
   const [title, setTitle] = useState('')
@@ -77,30 +78,21 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
     const sourceText = selectedMaterials
       .map((material) => `[${material.title}]\n${material.parsedText}`)
       .join('\n\n')
+    const selectedQuestionTypes = Object.entries(questionTypes)
+      .filter(([, enabled]) => Boolean(enabled))
+      .map(([type]) => type)
 
     try {
       setIsGenerating(true)
       setGenerationError('')
 
-      const response = await fetch('/api/generate-test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          questionCount: parsedCount,
-          questionTypes,
-          difficultyDistribution,
-          sourceText,
-        }),
+      const payload = await generateQuiz({
+        title,
+        questionCount: parsedCount,
+        questionTypes: selectedQuestionTypes,
+        difficultyDistribution,
+        sourceText,
       })
-
-      const payload = await response.json()
-      if (!response.ok) {
-        setGenerationError(payload.error || 'Generation failed. Please try again.')
-        return
-      }
 
       if (!Array.isArray(payload.questions) || payload.questions.length === 0) {
         setGenerationError('Generation failed: No questions were returned.')
