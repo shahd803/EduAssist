@@ -64,7 +64,9 @@ function ExportPanel({ questions, keptQuestionIds }) {
       keptQuestions.forEach((question, index) => {
         addPageIfNeeded(56)
         doc.setFont('helvetica', 'bold')
-        writeWrapped(`Q${index + 1} - ${question.type} - ${question.difficulty}`, 11, 16)
+        const typeLabel = question.type || 'Question'
+        const difficultyLabel = question.difficulty || 'Not set'
+        writeWrapped(`Q${index + 1} - ${typeLabel} - ${difficultyLabel}`, 11, 16)
         doc.setFont('helvetica', 'normal')
         writeWrapped(question.prompt, 12, 18)
 

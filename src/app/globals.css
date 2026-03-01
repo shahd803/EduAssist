@@ -634,14 +634,20 @@ input[type='number'] {
 
 .question-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(3, minmax(112px, 1fr));
   gap: 0.5rem;
   flex: 0 0 auto;
-  width: min(100%, 420px);
+  width: min(100%, 440px);
 }
 
 .question-actions .btn {
   width: 100%;
+  min-height: 44px;
+}
+
+.question-actions .btn:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 1px;
 }
 
 .full {

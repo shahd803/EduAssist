@@ -22,8 +22,9 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
     const questionKey = getQuestionKey(question)
     const formData = new FormData(event.currentTarget)
     const nextPrompt = String(formData.get(`${questionKey}-prompt`) || '').trim()
+    const hasChoices = Array.isArray(question.choices) && question.choices.length > 0
 
-    if (question.choices) {
+    if (hasChoices) {
       const choiceValues = formData
         .getAll(`${questionKey}-choice-text`)
         .map((value) => String(value).trim())
@@ -84,13 +85,16 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
           const isKept = keptQuestionIds.includes(questionKey)
           const isEditing = Boolean(editingQuestionIds[questionKey])
           const selectedChoice = question.correctChoice
+          const hasChoices = Array.isArray(question.choices) && question.choices.length > 0
+          const sourceLabel = question.source || 'AI Generated'
+          const difficultyLabel = question.difficulty || 'Not set'
           return (
           <article key={questionKey} className="question-card">
             <div className="question-head">
               <div>
-                <p className="label">{question.type}</p>
+                <p className="label">{question.type || (hasChoices ? 'Multiple-choice' : 'Short-answer')}</p>
                 <h3>{question.prompt}</h3>
-                <p className="muted">{question.source} - Difficulty: {question.difficulty}</p>
+                <p className="muted">{sourceLabel} - Difficulty: {difficultyLabel}</p>
               </div>
               <div className="button-stack question-actions">
                 <button type="button" className="btn btn-ghost" onClick={() => handleToggleEdit(questionKey)}>
@@ -106,7 +110,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 </button>
               </div>
             </div>
-            {question.choices && (
+            {hasChoices && (
               <ul className="choice-list">
                 {question.choices.map((choice, choiceIndex) => (
                   <li key={`${questionKey}-choice-${choiceIndex}`} className={selectedChoice === choice ? 'is-correct' : ''}>
@@ -128,7 +132,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 ))}
               </ul>
             )}
-            {question.choices && selectedChoice && (
+            {hasChoices && selectedChoice && (
               <span className="status-pill success">Correct answer set</span>
             )}
             {isEditing && (
@@ -142,7 +146,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                     defaultValue={question.prompt}
                   />
                 </label>
-                {question.choices && (
+                {hasChoices && (
                   <div className="choice-editor">
                     <span className="label">Choices</span>
                     <div className="choice-grid">

@@ -11,11 +11,43 @@ import ExportPanel from "@/components/ExportPanel";
 import Footer from "@/components/Footer";
 import { materials as initialMaterials, questions } from "@/data/sampleData";
 
+const toTitleCase = (value) =>
+  String(value || "")
+    .replace(/[_-]+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const normalizeQuestionType = (typeValue, hasChoices) => {
+  const raw = String(typeValue || "").trim().toLowerCase();
+  if (raw === "mcq" || raw.includes("multiple")) return "Multiple-choice";
+  if (raw.includes("short")) return "Short-answer";
+  if (raw.includes("true") || raw.includes("false")) return "True/False";
+  if (raw) return toTitleCase(raw);
+  return hasChoices ? "Multiple-choice" : "Short-answer";
+};
+
 const normalizeQuestions = (inputQuestions) =>
-  (Array.isArray(inputQuestions) ? inputQuestions : []).map((question, index) => ({
-    ...question,
-    _clientKey: question?._clientKey || `${question?.id ?? "question"}-${index}`,
-  }));
+  (Array.isArray(inputQuestions) ? inputQuestions : []).map((question, index) => {
+    const optionList = Array.isArray(question?.options) ? question.options : [];
+    const normalizedChoices = Array.isArray(question?.choices)
+      ? question.choices.filter(Boolean)
+      : optionList
+          .map((option) => (typeof option === "string" ? option : option?.optionText))
+          .filter(Boolean);
+    const correctFromOptions = optionList.find((option) => option?.isCorrect)?.optionText;
+    const hasChoices = normalizedChoices.length > 0;
+
+    return {
+      ...question,
+      id: question?.id ?? `${question?.questionType ?? "question"}-${index}`,
+      type: normalizeQuestionType(question?.type ?? question?.questionType, hasChoices),
+      source: question?.source || "AI Generated",
+      difficulty: toTitleCase(question?.difficulty ?? question?.level ?? "") || "Not set",
+      choices: hasChoices ? normalizedChoices : null,
+      correctChoice: question?.correctChoice ?? question?.correctAnswer ?? question?.answer ?? correctFromOptions ?? null,
+      _clientKey: question?._clientKey || `${question?.id ?? "question"}-${index}`,
+    };
+  });
 
 export default function AppPage() {
   const [materials, setMaterials] = useState(initialMaterials);

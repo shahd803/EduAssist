@@ -87,6 +87,14 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
         difficultyDistribution,
       })
 
+      // Debug output to inspect exactly what the backend returned.
+      if (typeof window !== 'undefined') {
+        window.__lastQuizPayload = payload
+      }
+      console.log('generateQuiz payload:', payload)
+      console.log('generateQuiz questions:', payload?.questions)
+      console.log('generateQuiz questions JSON:', JSON.stringify(payload?.questions || [], null, 2))
+
       if (!Array.isArray(payload.questions) || payload.questions.length === 0) {
         setGenerationError('Generation failed: No questions were returned.')
         return
