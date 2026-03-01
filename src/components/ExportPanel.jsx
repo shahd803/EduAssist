@@ -7,9 +7,10 @@ import { jsPDF } from 'jspdf'
 function ExportPanel({ questions, keptQuestionIds }) {
   const [exportError, setExportError] = useState('')
   const [isExporting, setIsExporting] = useState(false)
+  const getQuestionKey = (question) => question._clientKey || question.id
   const selectedKeepIds = Array.isArray(keptQuestionIds) ? keptQuestionIds : []
   const keptCount = Array.isArray(questions)
-    ? questions.filter((question) => selectedKeepIds.includes(question.id)).length
+    ? questions.filter((question) => selectedKeepIds.includes(getQuestionKey(question))).length
     : 0
 
   const handleDownload = () => {
@@ -18,7 +19,7 @@ function ExportPanel({ questions, keptQuestionIds }) {
       return
     }
 
-    const keptQuestions = questions.filter((question) => selectedKeepIds.includes(question.id))
+    const keptQuestions = questions.filter((question) => selectedKeepIds.includes(getQuestionKey(question)))
     if (keptQuestions.length === 0) {
       setExportError('Export failed: Select at least one question before exporting.')
       return

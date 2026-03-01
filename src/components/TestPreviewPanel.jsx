@@ -8,32 +8,34 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
   const [savedState, setSavedState] = useState({})
   const [editingQuestionIds, setEditingQuestionIds] = useState({})
   const questionCount = questions.length
+  const getQuestionKey = (question) => question._clientKey || question.id
 
-  const handleToggleEdit = (questionId) => {
+  const handleToggleEdit = (questionKey) => {
     setEditingQuestionIds((current) => ({
       ...current,
-      [questionId]: !current[questionId],
+      [questionKey]: !current[questionKey],
     }))
   }
 
   const handleSave = (event, question) => {
     event.preventDefault()
+    const questionKey = getQuestionKey(question)
     const formData = new FormData(event.currentTarget)
-    const nextPrompt = String(formData.get(`${question.id}-prompt`) || '').trim()
+    const nextPrompt = String(formData.get(`${questionKey}-prompt`) || '').trim()
 
     if (question.choices) {
       const choiceValues = formData
-        .getAll(`${question.id}-choice-text`)
+        .getAll(`${questionKey}-choice-text`)
         .map((value) => String(value).trim())
         .filter(Boolean)
-      const selectedCorrect = formData.get(`${question.id}-choice`)
+      const selectedCorrect = formData.get(`${questionKey}-choice`)
 
       if (choiceValues.length < 2 || !selectedCorrect) {
         setValidationErrors((current) => ({
           ...current,
-          [question.id]: 'Validation error: Multiple-choice questions require at least two choices and one marked correct.',
+          [questionKey]: 'Validation error: Multiple-choice questions require at least two choices and one marked correct.',
         }))
-        setSavedState((current) => ({ ...current, [question.id]: false }))
+        setSavedState((current) => ({ ...current, [questionKey]: false }))
         return
       }
 
@@ -52,9 +54,9 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
       })
     }
 
-    setValidationErrors((current) => ({ ...current, [question.id]: '' }))
-    setSavedState((current) => ({ ...current, [question.id]: true }))
-    setEditingQuestionIds((current) => ({ ...current, [question.id]: false }))
+    setValidationErrors((current) => ({ ...current, [questionKey]: '' }))
+    setSavedState((current) => ({ ...current, [questionKey]: true }))
+    setEditingQuestionIds((current) => ({ ...current, [questionKey]: false }))
   }
 
   return (
@@ -78,10 +80,10 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
           </div>
         )}
         {questions.map((question, questionIndex) => {
-          const isKept = keptQuestionIds.includes(question.id)
-          const isEditing = Boolean(editingQuestionIds[question.id])
+          const questionKey = getQuestionKey(question) || `question-${questionIndex}`
+          const isKept = keptQuestionIds.includes(questionKey)
+          const isEditing = Boolean(editingQuestionIds[questionKey])
           const selectedChoice = question.correctChoice
-          const questionKey = question.id ? `${question.id}-${questionIndex}` : `question-${questionIndex}`
           return (
           <article key={questionKey} className="question-card">
             <div className="question-head">
@@ -91,14 +93,14 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 <p className="muted">{question.source} - Difficulty: {question.difficulty}</p>
               </div>
               <div className="button-stack question-actions">
-                <button type="button" className="btn btn-ghost" onClick={() => handleToggleEdit(question.id)}>
+                <button type="button" className="btn btn-ghost" onClick={() => handleToggleEdit(questionKey)}>
                   {isEditing ? 'Close Edit' : 'Edit'}
                 </button>
                 <button type="button" className="btn btn-ghost">Refine</button>
                 <button
                   type="button"
                   className={`btn ${isKept ? 'btn-primary' : 'btn-ghost'}`}
-                  onClick={() => onToggleKeep(question.id)}
+                  onClick={() => onToggleKeep(questionKey)}
                 >
                   {isKept ? 'Kept' : 'Keep'}
                 </button>
@@ -111,7 +113,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                     <label className="checkbox">
                       <input
                         type="radio"
-                        name={`${question.id}-correct`}
+                        name={`${questionKey}-correct`}
                         value={choice}
                         checked={question.correctChoice === choice}
                         onChange={() => {
@@ -134,7 +136,7 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 <label className="field">
                   <span className="label">Prompt</span>
                   <textarea
-                    name={`${question.id}-prompt`}
+                    name={`${questionKey}-prompt`}
                     rows="3"
                     placeholder="Edit question prompt"
                     defaultValue={question.prompt}
@@ -148,13 +150,13 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                         <label key={`${questionKey}-editor-choice-${choiceIndex}`} className="choice-item">
                           <input
                             type="radio"
-                            name={`${question.id}-choice`}
+                            name={`${questionKey}-choice`}
                             value={choice}
                             defaultChecked={question.correctChoice === choice}
                           />
                           <input
                             type="text"
-                            name={`${question.id}-choice-text`}
+                            name={`${questionKey}-choice-text`}
                             placeholder="Enter choice text"
                             defaultValue={choice}
                           />
@@ -166,13 +168,13 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 )}
                 <div className="inline-actions">
                   <button type="submit" className="btn btn-primary">Save Changes</button>
-                  <button type="button" className="btn btn-outline" onClick={() => handleToggleEdit(question.id)}>
+                  <button type="button" className="btn btn-outline" onClick={() => handleToggleEdit(questionKey)}>
                     Cancel
                   </button>
-                  {savedState[question.id] && <span className="status-pill success">Changes saved</span>}
+                  {savedState[questionKey] && <span className="status-pill success">Changes saved</span>}
                 </div>
-                {validationErrors[question.id] && (
-                  <p className="status-pill danger">{validationErrors[question.id]}</p>
+                {validationErrors[questionKey] && (
+                  <p className="status-pill danger">{validationErrors[questionKey]}</p>
                 )}
               </form>
             )}

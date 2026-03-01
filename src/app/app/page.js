@@ -11,13 +11,19 @@ import ExportPanel from "@/components/ExportPanel";
 import Footer from "@/components/Footer";
 import { materials as initialMaterials, questions } from "@/data/sampleData";
 
+const normalizeQuestions = (inputQuestions) =>
+  (Array.isArray(inputQuestions) ? inputQuestions : []).map((question, index) => ({
+    ...question,
+    _clientKey: question?._clientKey || `${question?.id ?? "question"}-${index}`,
+  }));
+
 export default function AppPage() {
   const [materials, setMaterials] = useState(initialMaterials);
-  const [generatedQuestions, setGeneratedQuestions] = useState(questions);
+  const [generatedQuestions, setGeneratedQuestions] = useState(() => normalizeQuestions(questions));
   const [keptQuestionIds, setKeptQuestionIds] = useState([]);
 
   const handleQuestionsGenerated = (nextQuestions) => {
-    setGeneratedQuestions(nextQuestions);
+    setGeneratedQuestions(normalizeQuestions(nextQuestions));
     setKeptQuestionIds([]);
   };
 
@@ -32,7 +38,7 @@ export default function AppPage() {
   const handleQuestionUpdate = (updatedQuestion) => {
     setGeneratedQuestions((current) =>
       current.map((question) =>
-        question.id === updatedQuestion.id ? updatedQuestion : question
+        question._clientKey === updatedQuestion._clientKey ? updatedQuestion : question
       )
     );
   };
