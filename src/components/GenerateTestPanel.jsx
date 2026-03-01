@@ -17,21 +17,17 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
   const [generationError, setGenerationError] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const materialsWithText = useMemo(
-    () => materials.filter((material) => Boolean(material.parsedText)),
+  const availableMaterialIds = useMemo(
+    () => materials.map((material) => material.id),
     [materials]
-  )
-  const parsableMaterialIds = useMemo(
-    () => materialsWithText.map((material) => material.id),
-    [materialsWithText]
   )
 
   useEffect(() => {
     setSelectedMaterialIds((current) => {
-      const stillValid = current.filter((id) => parsableMaterialIds.includes(id))
-      return stillValid.length > 0 ? stillValid : parsableMaterialIds
+      const stillValid = current.filter((id) => availableMaterialIds.includes(id))
+      return stillValid.length > 0 ? stillValid : availableMaterialIds
     })
-  }, [parsableMaterialIds])
+  }, [availableMaterialIds])
 
   const handleTypeToggle = (key) => {
     setQuestionTypes((current) => ({ ...current, [key]: !current[key] }))
@@ -64,8 +60,8 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
       return
     }
 
-    if (materialsWithText.length === 0) {
-      setGenerationError('Generation failed: Upload at least one parsable material first.')
+    if (materials.length === 0) {
+      setGenerationError('Generation failed: Upload at least one material first.')
       return
     }
 
@@ -74,10 +70,8 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
       return
     }
 
-    const selectedMaterials = materialsWithText.filter((material) => selectedMaterialIds.includes(material.id))
-    const sourceText = selectedMaterials
-      .map((material) => `[${material.title}]\n${material.parsedText}`)
-      .join('\n\n')
+    const selectedMaterials = materials.filter((material) => selectedMaterialIds.includes(material.id))
+    const primaryMaterialId = selectedMaterials[0]?.id
     const selectedQuestionTypes = Object.entries(questionTypes)
       .filter(([, enabled]) => Boolean(enabled))
       .map(([type]) => type)
@@ -86,12 +80,11 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
       setIsGenerating(true)
       setGenerationError('')
 
-      const payload = await generateQuiz({
+      const payload = await generateQuiz(primaryMaterialId, {
         title,
         questionCount: parsedCount,
         questionTypes: selectedQuestionTypes,
         difficultyDistribution,
-        sourceText,
       })
 
       if (!Array.isArray(payload.questions) || payload.questions.length === 0) {
@@ -185,23 +178,18 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
           <div className="check-grid">
             {materials.length === 0 && <p className="muted">No uploaded materials yet.</p>}
             {materials.map((material) => {
-              const hasParsedText = Boolean(material.parsedText)
               return (
                 <label key={material.id} className="checkbox">
                   <input
                     type="checkbox"
                     checked={selectedMaterialIds.includes(material.id)}
                     onChange={() => handleMaterialToggle(material.id)}
-                    disabled={!hasParsedText}
                   />
                   <span>{material.title}</span>
                 </label>
               )
             })}
           </div>
-          {materials.some((material) => !material.parsedText) && (
-            <p className="muted">Some files could not be parsed to text and are not selectable.</p>
-          )}
         </div>
         <div className="form-actions">
           <button className="btn btn-primary" onClick={handleGenerate} disabled={isGenerating}>

@@ -77,12 +77,13 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
             <p>No questions generated yet. Use Generate Test to create your first set.</p>
           </div>
         )}
-        {questions.map((question) => {
+        {questions.map((question, questionIndex) => {
           const isKept = keptQuestionIds.includes(question.id)
           const isEditing = Boolean(editingQuestionIds[question.id])
           const selectedChoice = question.correctChoice
+          const questionKey = question.id ? `${question.id}-${questionIndex}` : `question-${questionIndex}`
           return (
-          <article key={question.id} className="question-card">
+          <article key={questionKey} className="question-card">
             <div className="question-head">
               <div>
                 <p className="label">{question.type}</p>
@@ -105,8 +106,8 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
             </div>
             {question.choices && (
               <ul className="choice-list">
-                {question.choices.map((choice) => (
-                  <li key={choice} className={selectedChoice === choice ? 'is-correct' : ''}>
+                {question.choices.map((choice, choiceIndex) => (
+                  <li key={`${questionKey}-choice-${choiceIndex}`} className={selectedChoice === choice ? 'is-correct' : ''}>
                     <label className="checkbox">
                       <input
                         type="radio"
@@ -143,8 +144,8 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                   <div className="choice-editor">
                     <span className="label">Choices</span>
                     <div className="choice-grid">
-                      {question.choices.map((choice) => (
-                        <label key={choice} className="choice-item">
+                      {question.choices.map((choice, choiceIndex) => (
+                        <label key={`${questionKey}-editor-choice-${choiceIndex}`} className="choice-item">
                           <input
                             type="radio"
                             name={`${question.id}-choice`}

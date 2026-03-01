@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api";
 
 // ===== TOKEN MANAGEMENT =====
 export const getToken = () => {
@@ -18,19 +18,20 @@ export const removeToken = () => {
 
 // ===== GENERIC FETCH WRAPPER =====
 async function apiFetch(endpoint, options = {}) {
+  const { skipAuth = false, ...requestOptions } = options;
   const token = getToken();
 
   const headers = {
     "Content-Type": "application/json",
-    ...(options.headers || {}),
+    ...(requestOptions.headers || {}),
   };
 
-  if (token) {
+  if (token && !skipAuth) {
     headers.Authorization = `Bearer ${token}`;
   }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
+    ...requestOptions,
     headers,
   });
 
@@ -40,6 +41,11 @@ async function apiFetch(endpoint, options = {}) {
   }
 
   return response.json();
+}
+
+async function parseErrorResponse(response) {
+  const data = await response.json().catch(() => null);
+  return data?.message || data?.error || `API Error (${response.status})`;
 }
 
 // ======================================
@@ -93,6 +99,23 @@ export const createMaterial = (data) =>
     body: JSON.stringify(data),
   });
 
+export const uploadMaterial = async (file, title) => {
+  const formData = new FormData();
+  formData.append("title", title || file?.name || "Untitled");
+  formData.append("file", file);
+
+  const response = await fetch(`${BASE_URL}/materials/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseErrorResponse(response));
+  }
+
+  return response.json();
+};
+
 export const getMaterials = () => apiFetch("/materials");
 
 export const getMaterialById = (id) => apiFetch(`/materials/${id}`);
@@ -106,10 +129,11 @@ export const deleteMaterial = (id) =>
 // QUIZZES
 // ======================================
 
-export const generateQuiz = (data) =>
-  apiFetch("/quizzes/generate", {
+export const generateQuiz = (materialId, data) =>
+  apiFetch(`/materials/${materialId}/generate-quiz`, {
     method: "POST",
     body: JSON.stringify(data),
+    skipAuth: true,
   });
 
 export const saveQuiz = (data) =>
@@ -132,3 +156,4 @@ export const deleteQuiz = (id) =>
 // ======================================
 
 export const checkHealth = () => apiFetch("/health");
+

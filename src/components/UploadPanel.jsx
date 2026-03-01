@@ -1,6 +1,7 @@
 "use client" //client side vs server side implementation
 
 import { useEffect, useRef, useState } from 'react'
+import { uploadMaterial } from '@/lib/api'
 
 function formatFileSize(bytes) {
   if (!bytes || bytes < 0) return '0 MB'
@@ -12,38 +13,23 @@ function getFileTypeLabel(fileName) {
   return extension || 'FILE'
 }
 
-function extractTextFromFile(rawText) {
-  const sanitized = String(rawText || '')
-    .replace(/\u0000/g, '')
-    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-
-  return sanitized.length >= 30 ? sanitized : ''
-}
-
 async function buildMaterialFromFile(file) {
-  let parsedText = ''
-  try {
-    parsedText = extractTextFromFile(await file.text())
-  } catch {
-    parsedText = ''
-  }
+  const uploadResponse = await uploadMaterial(file, file.name)
 
   return {
-    id: `mat-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-    title: file.name,
-    type: getFileTypeLabel(file.name),
+    id: uploadResponse.materialId,
+    title: uploadResponse.title || file.name,
+    type: uploadResponse.type || getFileTypeLabel(file.name),
     size: formatFileSize(file.size),
-    status: parsedText ? 'Parsing complete' : 'Text extraction unavailable',
+    status: 'Uploaded',
     uploaded: new Date().toLocaleString(),
     objectUrl: URL.createObjectURL(file),
-    parsedText,
+    fileUrl: uploadResponse.fileUrl || null,
   }
 }
 
 function isPreviewable(material) {
-  return ['PDF', 'TXT'].includes(material.type)
+  return ['PDF'].includes(material.type)
 }
 
 function UploadPanel({ materials, onMaterialsChange }) {
@@ -56,28 +42,27 @@ function UploadPanel({ materials, onMaterialsChange }) {
   const handleFiles = async (files) => {
     const validFiles = Array.from(files || []).filter((file) => {
       const extension = file.name.split('.').pop()?.toLowerCase()
-      return ['pdf', 'docx', 'txt'].includes(extension || '')
+      return ['pdf'].includes(extension || '')
     })
 
     if (validFiles.length === 0) {
-      setStatusText('No supported files found. Please upload PDF, DOCX, or TXT.')
+      setStatusText('No supported files found. Please upload PDF only.')
       return
     }
 
-    const newMaterials = await Promise.all(validFiles.map(buildMaterialFromFile))
-    newMaterials.forEach((material) => {
-      if (material.objectUrl) {
-        createdObjectUrlsRef.current.push(material.objectUrl)
-      }
-    })
-    const totalCount = materials.length + newMaterials.length
-    const unavailableCount = newMaterials.filter((material) => !material.parsedText).length
-    onMaterialsChange((current) => [...newMaterials, ...current])
-    setStatusText(
-      unavailableCount > 0
-        ? `Current total: ${totalCount} files. Text extraction unavailable for ${unavailableCount} file(s).`
-        : `Current total: ${totalCount} ${totalCount === 1 ? 'file' : 'files'} in Your materials.`
-    )
+    try {
+      const newMaterials = await Promise.all(validFiles.map(buildMaterialFromFile))
+      newMaterials.forEach((material) => {
+        if (material.objectUrl) {
+          createdObjectUrlsRef.current.push(material.objectUrl)
+        }
+      })
+      const totalCount = materials.length + newMaterials.length
+      onMaterialsChange((current) => [...newMaterials, ...current])
+      setStatusText(`Current total: ${totalCount} ${totalCount === 1 ? 'file' : 'files'} in Your materials.`)
+    } catch (error) {
+      setStatusText(`Upload failed: ${error.message}`)
+    }
   }
 
   const handleBrowseClick = () => {
@@ -148,7 +133,7 @@ function UploadPanel({ materials, onMaterialsChange }) {
       <div className="panel-header">
         <div>
           <h2>Upload Material</h2>
-          <p className="muted">Supported types PDF, DOCX, TXT. Maximum 10MB.</p>
+          <p className="muted">Supported type PDF. Maximum 10MB.</p>
         </div>
         <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
       </div>
@@ -157,7 +142,7 @@ function UploadPanel({ materials, onMaterialsChange }) {
           <input
             ref={inputRef}
             type="file"
-            accept=".pdf,.docx,.txt"
+            accept=".pdf"
             multiple
             hidden
             onChange={handleInputChange}
@@ -170,11 +155,11 @@ function UploadPanel({ materials, onMaterialsChange }) {
             style={{ borderStyle: isDragging ? 'solid' : 'dashed' }}
           >
             <p className="upload-title">Drop a file to begin</p>
-            <p className="muted">PDF, DOCX, or TXT only</p>
+            <p className="muted">PDF only</p>
             <button className="btn btn-outline" onClick={handleBrowseClick}>Browse Files</button>
           </div>
           <div className="upload-meta">
-            <p className="label">Parsing status</p>
+            <p className="label">Upload status</p>
             <p className="status-text">{statusText}</p>
             <p className="muted">Recent uploads are added to Your materials automatically.</p>
           </div>
@@ -192,7 +177,7 @@ function UploadPanel({ materials, onMaterialsChange }) {
                   <p className="muted">{material.type} - {material.size} - {material.uploaded}</p>
                 </div>
                 <div className="status-stack">
-                  <span className={material.status === 'Parsing complete' ? 'status-pill success' : 'status-pill muted'}>
+                  <span className={material.status === 'Uploaded' ? 'status-pill success' : 'status-pill muted'}>
                     {material.status}
                   </span>
                   <button
