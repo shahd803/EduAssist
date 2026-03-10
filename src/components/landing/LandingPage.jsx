@@ -10,12 +10,16 @@ export default function LandingPage() {
       <nav className={styles.navbar}>
         <div className={styles.logo}>EduAssist AI</div>
         <ul className={styles.navLinks}>
-          <li>Home</li>
-          <li>Features</li>
+          <li><Link href="/">Home</Link></li>
+          <li><a href="#features">Features</a></li>
           <li>Pricing</li>
           <li>Resources</li>
-          <li>Login</li>
-          <button className={styles.signupBtn}>Sign Up</button>
+          <li><Link href="/login">Login</Link></li>
+          <li>
+            <Link href="/login?tab=signup" className={styles.signupBtn}>
+              Sign Up
+            </Link>
+          </li>
         </ul>
       </nav>
       {/* Hero Section */}
@@ -34,7 +38,7 @@ export default function LandingPage() {
       </section>
 
             {/* Features Section */}
-      <section className={styles.features}>
+      <section id="features" className={styles.features}>
         <h2>How EduAssist AI Helps Teachers</h2>
 
         <div className={styles.featureCards}>

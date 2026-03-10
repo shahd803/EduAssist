@@ -29,7 +29,15 @@
   cursor: pointer;
 }
 
+.navLinks a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .signupBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: #2563eb;
   color: white;
   border: none;
