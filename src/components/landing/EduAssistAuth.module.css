@@ -130,36 +130,11 @@
   flex-wrap: wrap;
 }
 
-.tabs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 4px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  gap: 4px;
-  width: 100%;
-  max-width: 240px;
-}
-
-.tab,
-.tabActive {
-  border: 0;
-  border-radius: 999px;
-  padding: 10px 14px;
+.panelTitle {
+  margin: 0;
+  font-size: 1.25rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.tab {
-  background: transparent;
-  color: #475569;
-}
-
-.tabActive {
-  background: #0b5fff;
-  color: white;
-  box-shadow: 0 12px 24px rgba(11, 95, 255, 0.24);
+  color: #0f172a;
 }
 
 .homeLink {
@@ -261,9 +236,5 @@
 
   .panelHeader {
     align-items: stretch;
-  }
-
-  .tabs {
-    max-width: none;
   }
 }

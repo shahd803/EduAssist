@@ -34,16 +34,26 @@
   text-decoration: none;
 }
 
+.loginBtn,
 .signupBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #2563eb;
-  color: white;
-  border: none;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.loginBtn {
+  background-color: transparent;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+}
+
+.signupBtn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
 }
 
 /* Hero */

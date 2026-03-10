@@ -14,9 +14,13 @@ export default function LandingPage() {
           <li><a href="#features">Features</a></li>
           <li>Pricing</li>
           <li>Resources</li>
-          <li><Link href="/login">Login</Link></li>
           <li>
-            <Link href="/login?tab=signup" className={styles.signupBtn}>
+            <Link href="/login" className={styles.loginBtn}>
+              Log In
+            </Link>
+          </li>
+          <li>
+            <Link href="/signup" className={styles.signupBtn}>
               Sign Up
             </Link>
           </li>

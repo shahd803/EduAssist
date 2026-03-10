@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { login, signup } from "@/lib/api";
 import styles from "./EduAssistAuth.module.css";
 
-const copyByTab = {
+const copyByMode = {
   login: {
     eyebrow: "Teacher access",
     title: "Pick up where your planning left off.",
@@ -15,7 +15,7 @@ const copyByTab = {
     cta: "Log In",
     altLabel: "New to EduAssist AI?",
     altAction: "Create an account",
-    altHref: "/login?tab=signup",
+    altHref: "/signup",
   },
   signup: {
     eyebrow: "Get started",
@@ -25,14 +25,12 @@ const copyByTab = {
     cta: "Create Account",
     altLabel: "Already have an account?",
     altAction: "Log in",
-    altHref: "/login?tab=login",
+    altHref: "/login",
   },
 };
 
-export default function EduAssistAuthPage() {
+export default function EduAssistAuthPage({ mode = "login" }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const activeTab = searchParams.get("tab") === "signup" ? "signup" : "login";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -40,12 +38,8 @@ export default function EduAssistAuthPage() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const activeCopy = copyByTab[activeTab];
-
-  const handleTabChange = (nextTab) => {
-    router.replace(`/login?tab=${nextTab}`, { scroll: false });
-    setError("");
-  };
+  const activeMode = mode === "signup" ? "signup" : "login";
+  const activeCopy = copyByMode[activeMode];
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -61,7 +55,7 @@ export default function EduAssistAuthPage() {
     setIsSubmitting(true);
 
     try {
-      if (activeTab === "login") {
+      if (activeMode === "login") {
         await login({
           email: formData.email.trim(),
           password: formData.password,
@@ -118,26 +112,7 @@ export default function EduAssistAuthPage() {
 
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
-            <div className={styles.tabs} role="tablist" aria-label="Authentication">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "login"}
-                className={activeTab === "login" ? styles.tabActive : styles.tab}
-                onClick={() => handleTabChange("login")}
-              >
-                Log In
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "signup"}
-                className={activeTab === "signup" ? styles.tabActive : styles.tab}
-                onClick={() => handleTabChange("signup")}
-              >
-                Sign Up
-              </button>
-            </div>
+            <p className={styles.panelTitle}>{activeCopy.cta}</p>
             <Link href="/" className={styles.homeLink}>
               Back to landing page
             </Link>
@@ -145,7 +120,7 @@ export default function EduAssistAuthPage() {
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.fieldGroup}>
-              {activeTab === "signup" ? (
+              {activeMode === "signup" ? (
                 <label className={styles.field}>
                   <span>Full name</span>
                   <input
@@ -175,11 +150,11 @@ export default function EduAssistAuthPage() {
                 <span>Password</span>
                 <input
                   name="password"
-                  type="password"
+                    type="password"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    minLength={activeTab === "signup" ? 8 : undefined}
+                    minLength={activeMode === "signup" ? 8 : undefined}
                     required
                   />
                 </label>
