@@ -3,6 +3,8 @@
   min-height: 100vh;
   overflow: hidden;
   padding: 32px;
+  display: grid;
+  align-items: center;
   background:
     radial-gradient(circle at top left, rgba(11, 95, 255, 0.16), transparent 30%),
     radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.14), transparent 30%),
@@ -28,7 +30,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(360px, 440px);
   gap: 28px;
-  align-items: stretch;
+  align-items: center;
 }
 
 .marketing,
