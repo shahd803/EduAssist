@@ -93,21 +93,6 @@ export default function EduAssistAuthPage({ mode = "login" }) {
           <p className={styles.eyebrow}>{activeCopy.eyebrow}</p>
           <h1 className={styles.title}>{activeCopy.title}</h1>
           <p className={styles.description}>{activeCopy.description}</p>
-
-          <div className={styles.featureList}>
-            <article className={styles.featureCard}>
-              <h2>Lesson-ready output</h2>
-              <p>Generate quizzes quickly without breaking the planning flow.</p>
-            </article>
-            <article className={styles.featureCard}>
-              <h2>Shared design system</h2>
-              <p>Uses the same color tokens, spacing, and surface styling as the app.</p>
-            </article>
-            <article className={styles.featureCard}>
-              <h2>Fast handoff</h2>
-              <p>Successful authentication sends teachers straight into the workspace.</p>
-            </article>
-          </div>
         </section>
 
         <section className={styles.panel}>
