@@ -36,24 +36,13 @@
 
 .loginBtn,
 .signupBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  border-radius: 6px;
+  display: inline-block;
+  padding: 0;
+  border-radius: 0;
   cursor: pointer;
-}
-
-.loginBtn {
-  background-color: transparent;
-  color: #1e3a8a;
-  border: 1px solid #bfdbfe;
-}
-
-.signupBtn {
-  background-color: #2563eb;
-  color: white;
+  background: transparent;
   border: none;
+  color: inherit;
 }
 
 /* Hero */
