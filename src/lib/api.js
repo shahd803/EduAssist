@@ -103,10 +103,17 @@ export const uploadMaterial = async (file, title) => {
   const formData = new FormData();
   formData.append("title", title || file?.name || "Untitled");
   formData.append("file", file);
+  const token = getToken();
+  const headers = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${BASE_URL}/materials/upload`, {
     method: "POST",
     body: formData,
+    headers,
   });
 
   if (!response.ok) {
@@ -133,7 +140,6 @@ export const generateQuiz = (materialId, data) =>
   apiFetch(`/materials/${materialId}/generate-quiz`, {
     method: "POST",
     body: JSON.stringify(data),
-    skipAuth: true,
   });
 
 export const saveQuiz = (data) =>
