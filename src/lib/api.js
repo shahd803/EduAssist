@@ -40,7 +40,13 @@ async function apiFetch(endpoint, options = {}) {
     throw new Error(errorData?.message || "API Error");
   }
 
-  return response.json();
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
 }
 
 async function parseErrorResponse(response) {

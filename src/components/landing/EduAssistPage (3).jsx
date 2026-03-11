@@ -135,17 +135,25 @@ export default function EduAssistAuthPage({ mode = "login" }) {
                 <span>Password</span>
                 <input
                   name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    minLength={activeMode === "signup" ? 8 : undefined}
-                    required
-                  />
-                </label>
+                  type="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  minLength={activeMode === "signup" ? 8 : undefined}
+                  required
+                />
+              </label>
             </div>
 
             {error ? <p className={styles.error}>{error}</p> : null}
+
+            {activeMode === "login" ? (
+              <div className={styles.secondaryRow}>
+                <Link href="/forgot-password" className={styles.inlineLink}>
+                  Reset password
+                </Link>
+              </div>
+            ) : null}
 
             <button type="submit" className={styles.primaryButton} disabled={isSubmitting}>
               {isSubmitting ? "Please wait..." : activeCopy.cta}
