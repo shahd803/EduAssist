@@ -2,11 +2,38 @@
 "use client"
 
 import { useState } from 'react'
+import { refineQuiz } from '@/lib/api'
 
-function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestionUpdate }) {
+const normalizeSentence = (value, fallback = '') => {
+  const text = String(value || fallback)
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!text) {
+    return fallback
+  }
+
+  const withCapital = text.charAt(0).toUpperCase() + text.slice(1)
+  return /[.?!]$/.test(withCapital) ? withCapital : `${withCapital}?`
+}
+
+const normalizeChoice = (value) =>
+  String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+function TestPreviewPanel({
+  questions,
+  keptQuestionIds,
+  onToggleKeep,
+  onQuestionUpdate,
+  onQuestionsRegenerated,
+}) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
   const [editingQuestionIds, setEditingQuestionIds] = useState({})
+  const [refineError, setRefineError] = useState('')
+  const [isRefiningQuiz, setIsRefiningQuiz] = useState(false)
   const questionCount = questions.length
   const getQuestionKey = (question) => question._clientKey || question.id
 
@@ -60,6 +87,72 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
     setEditingQuestionIds((current) => ({ ...current, [questionKey]: false }))
   }
 
+  const handleRefine = (question) => {
+    const questionKey = getQuestionKey(question)
+    const hasChoices = Array.isArray(question.choices) && question.choices.length > 0
+    const refinedChoices = hasChoices
+      ? Array.from(
+          new Set(
+            question.choices
+              .map((choice) => normalizeChoice(choice))
+              .filter(Boolean)
+          )
+        )
+      : null
+
+    const refinedQuestion = {
+      ...question,
+      prompt: normalizeSentence(question.prompt, question.prompt),
+      choices: refinedChoices,
+      source: question.source === 'AI Refined' ? question.source : 'AI Refined',
+    }
+
+    if (refinedChoices && refinedChoices.length > 0 && !refinedChoices.includes(question.correctChoice)) {
+      refinedQuestion.correctChoice = refinedChoices[0]
+    }
+
+    if (onQuestionUpdate) {
+      onQuestionUpdate(refinedQuestion)
+    }
+
+    setValidationErrors((current) => ({ ...current, [questionKey]: '' }))
+    setSavedState((current) => ({ ...current, [questionKey]: 'refined' }))
+  }
+
+  const handleRegenerateSelected = async () => {
+    if (questionCount === 0) {
+      setRefineError('Regeneration failed: No generated questions available.')
+      return
+    }
+
+    try {
+      setIsRefiningQuiz(true)
+      setRefineError('')
+
+      const payload = await refineQuiz()
+
+      if (!Array.isArray(payload?.questions) || payload.questions.length === 0) {
+        setRefineError('Regeneration failed: No refined questions were returned.')
+        return
+      }
+
+      if (onQuestionsRegenerated) {
+        onQuestionsRegenerated({
+          quizId: payload.quizId || null,
+          questions: payload.questions,
+        })
+      }
+
+      setSavedState({})
+      setValidationErrors({})
+      setEditingQuestionIds({})
+    } catch (error) {
+      setRefineError(`Regeneration failed: ${error.message}`)
+    } finally {
+      setIsRefiningQuiz(false)
+    }
+  }
+
   return (
     <section className="panel">
       <div className="panel-header">
@@ -71,9 +164,17 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
         </div>
         <div className="button-stack">
           <button className="btn btn-outline">Edit Options</button>
-          <button className="btn btn-primary">Regenerate Selected</button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleRegenerateSelected}
+            disabled={isRefiningQuiz}
+          >
+            {isRefiningQuiz ? 'Regenerating...' : 'Regenerate Selected'}
+          </button>
         </div>
       </div>
+      {refineError && <p className="status-pill danger">{refineError}</p>}
       <div className="question-list">
         {questionCount === 0 && (
           <div className="empty-state">
@@ -100,7 +201,9 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                 <button type="button" className="btn btn-ghost" onClick={() => handleToggleEdit(questionKey)}>
                   {isEditing ? 'Close Edit' : 'Edit'}
                 </button>
-                <button type="button" className="btn btn-ghost">Refine</button>
+                <button type="button" className="btn btn-ghost" onClick={() => handleRefine(question)}>
+                  Refine
+                </button>
                 <button
                   type="button"
                   className={`btn ${isKept ? 'btn-primary' : 'btn-ghost'}`}
@@ -175,7 +278,11 @@ function TestPreviewPanel({ questions, keptQuestionIds, onToggleKeep, onQuestion
                   <button type="button" className="btn btn-outline" onClick={() => handleToggleEdit(questionKey)}>
                     Cancel
                   </button>
-                  {savedState[questionKey] && <span className="status-pill success">Changes saved</span>}
+                  {savedState[questionKey] && (
+                    <span className="status-pill success">
+                      {savedState[questionKey] === 'refined' ? 'Refined' : 'Changes saved'}
+                    </span>
+                  )}
                 </div>
                 {validationErrors[questionKey] && (
                   <p className="status-pill danger">{validationErrors[questionKey]}</p>

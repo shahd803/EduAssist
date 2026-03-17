@@ -53,10 +53,18 @@ export default function AppPage() {
   const [materials, setMaterials] = useState(initialMaterials);
   const [generatedQuestions, setGeneratedQuestions] = useState(() => normalizeQuestions(questions));
   const [keptQuestionIds, setKeptQuestionIds] = useState([]);
+  const [generatedQuizId, setGeneratedQuizId] = useState(null);
 
-  const handleQuestionsGenerated = (nextQuestions) => {
+  const handleQuestionsGenerated = (generationResult) => {
+    const nextQuestions = Array.isArray(generationResult)
+      ? generationResult
+      : generationResult?.questions;
+
     setGeneratedQuestions(normalizeQuestions(nextQuestions));
     setKeptQuestionIds([]);
+    setGeneratedQuizId(
+      Array.isArray(generationResult) ? null : generationResult?.quizId ?? null
+    );
   };
 
   const handleToggleKeep = (questionId) => {
@@ -91,8 +99,13 @@ export default function AppPage() {
           keptQuestionIds={keptQuestionIds}
           onToggleKeep={handleToggleKeep}
           onQuestionUpdate={handleQuestionUpdate}
+          onQuestionsRegenerated={handleQuestionsGenerated}
         />
-        <ExportPanel questions={generatedQuestions} keptQuestionIds={keptQuestionIds} />
+        <ExportPanel
+          generatedQuizId={generatedQuizId}
+          questions={generatedQuestions}
+          keptQuestionIds={keptQuestionIds}
+        />
       </main>
 
       <Footer />

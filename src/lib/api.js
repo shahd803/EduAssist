@@ -148,10 +148,21 @@ export const generateQuiz = (materialId, data) =>
     body: JSON.stringify(data),
   });
 
+export const refineQuiz = () =>
+  apiFetch("/quiz/refine", {
+    method: "POST",
+  });
+
 export const saveQuiz = (data) =>
   apiFetch("/quizzes", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+
+// Reserved for the backend-owned export flow once the Spring endpoint is live.
+export const exportQuiz = (quizId) =>
+  apiFetch(`/quizzes/${quizId}/export`, {
+    method: "POST",
   });
 
 export const getQuizzes = () => apiFetch("/quizzes");

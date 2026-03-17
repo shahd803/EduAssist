@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { jsPDF } from 'jspdf'
 
-function ExportPanel({ questions, keptQuestionIds }) {
+function ExportPanel({ generatedQuizId, questions, keptQuestionIds }) {
   const [exportError, setExportError] = useState('')
   const [isExporting, setIsExporting] = useState(false)
   const getQuestionKey = (question) => question._clientKey || question.id
@@ -110,7 +110,10 @@ function ExportPanel({ questions, keptQuestionIds }) {
     <section className="panel export-panel">
       <div>
         <h2>Export</h2>
-        <p className="muted">Download PDF with questions and answer key.</p>
+        <p className="muted">
+          Download PDF with questions and answer key.
+          {generatedQuizId ? ` Backend quiz ID ready: ${generatedQuizId}` : ''}
+        </p>
       </div>
       <div className="export-actions">
         <button className="btn btn-primary" onClick={handleDownload} disabled={isExporting}>

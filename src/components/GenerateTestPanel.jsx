@@ -100,7 +100,10 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
         return
       }
 
-      onQuestionsGenerated(payload.questions)
+      onQuestionsGenerated({
+        quizId: payload.quizId || payload.id || null,
+        questions: payload.questions,
+      })
     } catch (error) {
       setGenerationError(`Generation failed: ${error.message}`)
     } finally {
