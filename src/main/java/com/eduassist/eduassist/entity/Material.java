@@ -13,8 +13,8 @@ public class Material {
     @Column(name = "material_id")
     private UUID materialId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
     private AppUser user;
 
     @Column(nullable = false, length = 200)

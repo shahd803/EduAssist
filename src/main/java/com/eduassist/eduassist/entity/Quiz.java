@@ -13,12 +13,14 @@ public class Quiz {
     @Column(name = "quiz_id")
     private UUID quizId;
 
+    // Material is still required
     @ManyToOne(optional = false)
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    // 🔥 NOW OPTIONAL (public mode)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
     private AppUser user;
 
     @Column(nullable = false, length = 200)
@@ -39,9 +41,14 @@ public class Quiz {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
+    // Store AI-generated questions JSON
+    @Column(name = "questions_json", columnDefinition = "TEXT")
+    private String questionsJson;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = OffsetDateTime.now();
+
         if (this.version == null) {
             this.version = 1;
         }
@@ -52,6 +59,8 @@ public class Quiz {
             this.status = "DRAFT";
         }
     }
+
+    // ================= GETTERS & SETTERS =================
 
     public UUID getQuizId() {
         return quizId;
@@ -124,5 +133,12 @@ public class Quiz {
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
-}
 
+    public String getQuestionsJson() {
+        return questionsJson;
+    }
+
+    public void setQuestionsJson(String questionsJson) {
+        this.questionsJson = questionsJson;
+    }
+}

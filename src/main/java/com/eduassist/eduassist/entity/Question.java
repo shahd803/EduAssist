@@ -1,6 +1,7 @@
 package com.eduassist.eduassist.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +18,7 @@ public class Question {
     private Quiz quiz;
 
     @Column(name = "question_type", nullable = false, length = 12)
-    private String questionType; // MCQ, TRUE_FALSE, SHORT
+    private String questionType;
 
     @Column(nullable = false)
     private String prompt;
@@ -26,6 +27,9 @@ public class Question {
 
     @Column(nullable = false)
     private Integer points;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OptionItem> options;
 
     @PrePersist
     protected void onCreate() {
@@ -81,5 +85,12 @@ public class Question {
     public void setPoints(Integer points) {
         this.points = points;
     }
-}
 
+    public List<OptionItem> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<OptionItem> options) {
+        this.options = options;
+    }
+}
