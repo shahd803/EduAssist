@@ -7,8 +7,9 @@ COPY . .
 RUN chmod +x mvnw
 RUN ./mvnw clean package -Dmaven.test.skip=true
 
-# expose port (important for Render)
 EXPOSE 8080
 
-# run the app
+
+ENV PORT=8080
+
 CMD ["java", "-jar", "target/eduassist-0.0.1-SNAPSHOT.jar"]
