@@ -1,4 +1,13 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api";
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+const BASE_URL = RAW_BASE_URL.replace(/\/+$/, "");
+
+const buildUrl = (endpoint) => {
+  const normalizedEndpoint = String(endpoint || "").startsWith("/")
+    ? String(endpoint || "")
+    : `/${String(endpoint || "")}`;
+
+  return `${BASE_URL}${normalizedEndpoint}`;
+};
 
 // ===== TOKEN MANAGEMENT =====
 export const getToken = () => {
@@ -30,7 +39,7 @@ async function apiFetch(endpoint, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(buildUrl(endpoint), {
     ...requestOptions,
     headers,
   });
@@ -116,7 +125,7 @@ export const uploadMaterial = async (file, title) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}/materials/upload`, {
+  const response = await fetch(buildUrl("/materials/upload"), {
     method: "POST",
     body: formData,
     headers,
