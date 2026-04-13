@@ -2,25 +2,34 @@
 "use client"
 
 import { useState } from 'react'
-import { refineQuiz } from '@/lib/api'
+import { refineQuestion, refineQuiz } from '@/lib/api'
 
-const normalizeSentence = (value, fallback = '') => {
-  const text = String(value || fallback)
-    .replace(/\s+/g, ' ')
-    .trim()
-
-  if (!text) {
-    return fallback
+const extractRefinedQuestion = (payload, questionId) => {
+  if (!payload || typeof payload !== 'object') {
+    return null
   }
 
-  const withCapital = text.charAt(0).toUpperCase() + text.slice(1)
-  return /[.?!]$/.test(withCapital) ? withCapital : `${withCapital}?`
-}
+  if (Array.isArray(payload?.questions)) {
+    return (
+      payload.questions.find((candidate) => {
+        const candidateId = candidate?.questionId ?? candidate?.id ?? null
+        return String(candidateId) === String(questionId)
+      }) ||
+      payload.questions[0] ||
+      null
+    )
+  }
 
-const normalizeChoice = (value) =>
-  String(value || '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  if (payload.question && typeof payload.question === 'object') {
+    return payload.question
+  }
+
+  if (payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data)) {
+    return payload.data
+  }
+
+  return payload
+}
 
 function TestPreviewPanel({
   questions,
@@ -34,6 +43,7 @@ function TestPreviewPanel({
   const [editingQuestionIds, setEditingQuestionIds] = useState({})
   const [refineError, setRefineError] = useState('')
   const [isRefiningQuiz, setIsRefiningQuiz] = useState(false)
+  const [refiningQuestionIds, setRefiningQuestionIds] = useState({})
   const questionCount = questions.length
   const getQuestionKey = (question) => question._clientKey || question.id
 
@@ -87,36 +97,47 @@ function TestPreviewPanel({
     setEditingQuestionIds((current) => ({ ...current, [questionKey]: false }))
   }
 
-  const handleRefine = (question) => {
+  const handleRefine = async (question) => {
     const questionKey = getQuestionKey(question)
-    const hasChoices = Array.isArray(question.choices) && question.choices.length > 0
-    const refinedChoices = hasChoices
-      ? Array.from(
-          new Set(
-            question.choices
-              .map((choice) => normalizeChoice(choice))
-              .filter(Boolean)
-          )
-        )
-      : null
+    const backendQuestionId = question?.questionId
 
-    const refinedQuestion = {
-      ...question,
-      prompt: normalizeSentence(question.prompt, question.prompt),
-      choices: refinedChoices,
-      source: question.source === 'AI Refined' ? question.source : 'AI Refined',
+    if (!backendQuestionId) {
+      setRefineError('Refine failed: This question is missing a backend question ID.')
+      return
     }
 
-    if (refinedChoices && refinedChoices.length > 0 && !refinedChoices.includes(question.correctChoice)) {
-      refinedQuestion.correctChoice = refinedChoices[0]
-    }
+    try {
+      setRefiningQuestionIds((current) => ({ ...current, [questionKey]: true }))
+      setRefineError('')
 
-    if (onQuestionUpdate) {
-      onQuestionUpdate(refinedQuestion)
-    }
+      const payload = await refineQuestion(backendQuestionId)
+      const refinedQuestion = extractRefinedQuestion(payload, backendQuestionId)
 
-    setValidationErrors((current) => ({ ...current, [questionKey]: '' }))
-    setSavedState((current) => ({ ...current, [questionKey]: 'refined' }))
+      if (!refinedQuestion || typeof refinedQuestion !== 'object') {
+        setRefineError('Refine failed: No refined question was returned.')
+        return
+      }
+
+      if (onQuestionUpdate) {
+        onQuestionUpdate({
+          ...question,
+          ...refinedQuestion,
+          questionId:
+            refinedQuestion.questionId ??
+            refinedQuestion.id ??
+            question.questionId,
+          _clientKey: questionKey,
+          source: refinedQuestion.source || 'AI Refined',
+        })
+      }
+
+      setValidationErrors((current) => ({ ...current, [questionKey]: '' }))
+      setSavedState((current) => ({ ...current, [questionKey]: 'refined' }))
+    } catch (error) {
+      setRefineError(`Refine failed: ${error.message}`)
+    } finally {
+      setRefiningQuestionIds((current) => ({ ...current, [questionKey]: false }))
+    }
   }
 
   const handleRegenerateSelected = async () => {
@@ -185,6 +206,7 @@ function TestPreviewPanel({
           const questionKey = getQuestionKey(question) || `question-${questionIndex}`
           const isKept = keptQuestionIds.includes(questionKey)
           const isEditing = Boolean(editingQuestionIds[questionKey])
+          const isRefiningQuestion = Boolean(refiningQuestionIds[questionKey])
           const selectedChoice = question.correctChoice
           const hasChoices = Array.isArray(question.choices) && question.choices.length > 0
           const sourceLabel = question.source || 'AI Generated'
@@ -201,8 +223,13 @@ function TestPreviewPanel({
                 <button type="button" className="btn btn-ghost" onClick={() => handleToggleEdit(questionKey)}>
                   {isEditing ? 'Close Edit' : 'Edit'}
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={() => handleRefine(question)}>
-                  Refine
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => handleRefine(question)}
+                  disabled={isRefiningQuestion}
+                >
+                  {isRefiningQuestion ? 'Refining...' : 'Refine'}
                 </button>
                 <button
                   type="button"

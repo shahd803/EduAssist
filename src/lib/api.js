@@ -157,6 +157,11 @@ export const generateQuiz = (materialId, data) =>
     body: JSON.stringify(data),
   });
 
+export const refineQuestion = (questionId) =>
+  apiFetch(`/materials/questions/${questionId}/refine`, {
+    method: "POST",
+  });
+
 export const refineQuiz = () =>
   apiFetch("/quiz/refine", {
     method: "POST",

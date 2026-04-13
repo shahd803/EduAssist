@@ -28,6 +28,8 @@ const normalizeQuestionType = (typeValue, hasChoices) => {
 
 const normalizeQuestions = (inputQuestions) =>
   (Array.isArray(inputQuestions) ? inputQuestions : []).map((question, index) => {
+    const backendQuestionId =
+      question?.questionId ?? (question?._clientKey ? null : question?.id) ?? null;
     const optionList = Array.isArray(question?.options) ? question.options : [];
     const normalizedChoices = Array.isArray(question?.choices)
       ? question.choices.filter(Boolean)
@@ -39,13 +41,16 @@ const normalizeQuestions = (inputQuestions) =>
 
     return {
       ...question,
-      id: question?.id ?? `${question?.questionType ?? "question"}-${index}`,
+      questionId: backendQuestionId,
+      id: question?.id ?? backendQuestionId ?? `${question?.questionType ?? "question"}-${index}`,
       type: normalizeQuestionType(question?.type ?? question?.questionType, hasChoices),
       source: question?.source || "AI Generated",
       difficulty: toTitleCase(question?.difficulty ?? question?.level ?? "") || "Not set",
       choices: hasChoices ? normalizedChoices : null,
       correctChoice: question?.correctChoice ?? question?.correctAnswer ?? question?.answer ?? correctFromOptions ?? null,
-      _clientKey: question?._clientKey || `${question?.id ?? "question"}-${index}`,
+      _clientKey:
+        question?._clientKey ||
+        `${backendQuestionId ?? question?.id ?? question?.questionType ?? "question"}-${index}`,
     };
   });
 
@@ -76,9 +81,14 @@ export default function AppPage() {
   };
 
   const handleQuestionUpdate = (updatedQuestion) => {
+    const [normalizedUpdatedQuestion] = normalizeQuestions([updatedQuestion]);
+    if (!normalizedUpdatedQuestion) return;
+
     setGeneratedQuestions((current) =>
       current.map((question) =>
-        question._clientKey === updatedQuestion._clientKey ? updatedQuestion : question
+        question._clientKey === normalizedUpdatedQuestion._clientKey
+          ? normalizedUpdatedQuestion
+          : question
       )
     );
   };
