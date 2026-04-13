@@ -26,6 +26,12 @@ const normalizeQuestionType = (typeValue, hasChoices) => {
   return hasChoices ? "Multiple-choice" : "Short-answer";
 };
 
+const getOptionText = (option) =>
+  typeof option === "string" ? option : option?.optionText ?? option?.text ?? null;
+
+const isCorrectOption = (option) =>
+  Boolean(option?.isCorrect ?? option?.correct);
+
 const normalizeQuestions = (inputQuestions) =>
   (Array.isArray(inputQuestions) ? inputQuestions : []).map((question, index) => {
     const backendQuestionId =
@@ -34,9 +40,11 @@ const normalizeQuestions = (inputQuestions) =>
     const normalizedChoices = Array.isArray(question?.choices)
       ? question.choices.filter(Boolean)
       : optionList
-          .map((option) => (typeof option === "string" ? option : option?.optionText))
+          .map(getOptionText)
           .filter(Boolean);
-    const correctFromOptions = optionList.find((option) => option?.isCorrect)?.optionText;
+    const correctFromOptions = getOptionText(
+      optionList.find(isCorrectOption)
+    );
     const hasChoices = normalizedChoices.length > 0;
 
     return {
