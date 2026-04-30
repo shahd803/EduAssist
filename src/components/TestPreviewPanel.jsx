@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from 'react'
-import { refineQuestion, refineQuiz } from '@/lib/api'
+import { refineQuestion } from '@/lib/api'
 
 const extractRefinedQuestion = (payload, questionId) => {
   if (!payload || typeof payload !== 'object') {
@@ -36,13 +36,11 @@ function TestPreviewPanel({
   keptQuestionIds,
   onToggleKeep,
   onQuestionUpdate,
-  onQuestionsRegenerated,
 }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [savedState, setSavedState] = useState({})
   const [editingQuestionIds, setEditingQuestionIds] = useState({})
   const [refineError, setRefineError] = useState('')
-  const [isRefiningQuiz, setIsRefiningQuiz] = useState(false)
   const [refiningQuestionIds, setRefiningQuestionIds] = useState({})
   const questionCount = questions.length
   const getQuestionKey = (question) => question._clientKey || question.id
@@ -140,40 +138,6 @@ function TestPreviewPanel({
     }
   }
 
-  const handleRegenerateSelected = async () => {
-    if (questionCount === 0) {
-      setRefineError('Regeneration failed: No generated questions available.')
-      return
-    }
-
-    try {
-      setIsRefiningQuiz(true)
-      setRefineError('')
-
-      const payload = await refineQuiz()
-
-      if (!Array.isArray(payload?.questions) || payload.questions.length === 0) {
-        setRefineError('Regeneration failed: No refined questions were returned.')
-        return
-      }
-
-      if (onQuestionsRegenerated) {
-        onQuestionsRegenerated({
-          quizId: payload.quizId || null,
-          questions: payload.questions,
-        })
-      }
-
-      setSavedState({})
-      setValidationErrors({})
-      setEditingQuestionIds({})
-    } catch (error) {
-      setRefineError(`Regeneration failed: ${error.message}`)
-    } finally {
-      setIsRefiningQuiz(false)
-    }
-  }
-
   return (
     <section className="panel">
       <div className="panel-header">
@@ -182,17 +146,6 @@ function TestPreviewPanel({
           <p className="muted">
             {questionCount > 0 ? `${questionCount} questions ready for review` : 'No generated questions yet'}
           </p>
-        </div>
-        <div className="button-stack">
-          <button className="btn btn-outline">Edit Options</button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleRegenerateSelected}
-            disabled={isRefiningQuiz}
-          >
-            {isRefiningQuiz ? 'Regenerating...' : 'Regenerate Selected'}
-          </button>
         </div>
       </div>
       {refineError && <p className="status-pill danger">{refineError}</p>}
@@ -297,7 +250,6 @@ function TestPreviewPanel({
                         </label>
                       ))}
                     </div>
-                    <button type="button" className="btn btn-outline small">Add choice</button>
                   </div>
                 )}
                 <div className="inline-actions">

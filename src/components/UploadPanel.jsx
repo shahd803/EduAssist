@@ -135,7 +135,6 @@ function UploadPanel({ materials, onMaterialsChange }) {
           <h2>Upload Material</h2>
           <p className="muted">Supported type PDF. Maximum 10MB.</p>
         </div>
-        <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
       </div>
       <div className="upload-grid">
         <div className="upload-card">
@@ -200,10 +199,10 @@ function UploadPanel({ materials, onMaterialsChange }) {
             {materials.length === 0 && (
               <div className="empty-state">
                 <p>No materials uploaded. Click Upload Material to add a file.</p>
-                <button className="btn btn-primary" onClick={handleBrowseClick}>Upload Material</button>
               </div>
             )}
           </div>
+          <button className="btn btn-primary full" onClick={handleBrowseClick}>Upload Material</button>
         </div>
       </div>
       {previewMaterial && (

@@ -111,7 +111,16 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
     }
   }
 
-  const handleRetry = () => {
+  const handleCancel = () => {
+    setTitle('')
+    setQuestionCount('')
+    setDifficultyDistribution('')
+    setQuestionTypes({
+      multipleChoice: true,
+      shortAnswer: true,
+      trueFalse: false,
+    })
+    setSelectedMaterialIds(availableMaterialIds)
     setGenerationError('')
   }
 
@@ -206,8 +215,7 @@ function GenerateTestPanel({ materials, onQuestionsGenerated }) {
           <button className="btn btn-primary" onClick={handleGenerate} disabled={isGenerating}>
             {isGenerating ? 'Generating...' : 'Generate'}
           </button>
-          <button className="btn btn-outline">Cancel</button>
-          <button className="btn btn-outline" onClick={handleRetry} disabled={isGenerating}>Retry</button>
+          <button className="btn btn-outline" onClick={handleCancel} disabled={isGenerating}>Cancel</button>
         </div>
       </div>
     </section>

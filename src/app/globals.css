@@ -236,12 +236,14 @@ textarea {
 .materials-list {
   display: grid;
   gap: 1rem;
+  grid-template-rows: auto minmax(0, 260px) auto;
 }
 
 .materials-scroll {
   display: grid;
+  align-content: start;
   gap: 1rem;
-  max-height: 360px;
+  height: 260px;
   overflow-y: auto;
   padding-right: 0.25rem;
 }
@@ -743,5 +745,13 @@ input[type='number'] {
 
   .preview-frame {
     min-height: 60vh;
+  }
+
+  .materials-list {
+    grid-template-rows: auto minmax(0, 240px) auto;
+  }
+
+  .materials-scroll {
+    height: 240px;
   }
 }

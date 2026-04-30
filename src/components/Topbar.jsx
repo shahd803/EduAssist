@@ -12,7 +12,6 @@ function Topbar() {
         </div>
       </div>
       <nav className="topbar-actions">
-        <Link href="/my-tests" className="btn btn-ghost">My Tests</Link>
         <Link href="/settings" className="btn btn-ghost">Settings</Link>
       </nav>
     </header>
