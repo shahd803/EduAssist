@@ -9,22 +9,6 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <div className={styles.logo}>EduAssist AI</div>
-        <ul className={styles.navLinks}>
-          <li><Link href="/">Home</Link></li>
-          <li><a href="#features">Features</a></li>
-          <li>Pricing</li>
-          <li>Resources</li>
-          <li>
-            <Link href="/login" className={styles.loginBtn}>
-              Log In
-            </Link>
-          </li>
-          <li>
-            <Link href="/signup" className={styles.signupBtn}>
-              Sign Up
-            </Link>
-          </li>
-        </ul>
       </nav>
       {/* Hero Section */}
       <section className={styles.hero}>
