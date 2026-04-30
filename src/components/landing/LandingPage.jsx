@@ -34,9 +34,14 @@ export default function LandingPage() {
             Boost your teaching efficiency with AI-powered tools to manage
             classrooms, create quizzes, and analyze student performance.
           </p>
-          <Link href="/app" className={styles.primaryBtn}>
-            Get Started for Free
-          </Link>
+          <div className={styles.heroActions}>
+            <Link href="/login" className={styles.secondaryBtn}>
+              Log In
+            </Link>
+            <Link href="/signup" className={styles.primaryBtn}>
+              Sign Up
+            </Link>
+          </div>
           <span className={styles.note}>No credit card required</span>
         </div>
       </section>

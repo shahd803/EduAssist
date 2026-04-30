@@ -89,12 +89,14 @@ export const login = async (data) => {
 export const forgotPassword = (email) =>
   apiFetch("/auth/forgot-password", {
     method: "POST",
+    skipAuth: true,
     body: JSON.stringify({ email }),
   });
 
 export const resetPassword = (token, newPassword) =>
   apiFetch("/auth/reset-password", {
     method: "POST",
+    skipAuth: true,
     body: JSON.stringify({ token, newPassword }),
   });
 
