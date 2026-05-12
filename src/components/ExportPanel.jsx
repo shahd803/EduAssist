@@ -111,8 +111,9 @@ function ExportPanel({ generatedQuizId, questions, keptQuestionIds }) {
       <div>
         <h2>Export</h2>
         <p className="muted">
-          Download PDF with questions and answer key.
-          {generatedQuizId ? ` Backend quiz ID ready: ${generatedQuizId}` : ''}
+          {generatedQuizId
+            ? 'Download PDF with questions and answer key. Quiz is ready for export.'
+            : 'Generate a quiz first to enable export.'}
         </p>
       </div>
       <div className="export-actions">
